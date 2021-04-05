@@ -3,7 +3,8 @@
     "prettier",
     "@typescript-eslint",
     "testing-library",
-    "jest-dom"
+    "jest-dom",
+    "simple-import-sort"
   ],
   "extends": [
     "airbnb-typescript",
@@ -47,6 +48,7 @@
       }
     ],
     // No longer needed, as of React v17
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "simple-import-sort/imports": "error"
   }
 }
