@@ -1,23 +1,17 @@
-import logo from './logo.svg';
-import './App.scss';
+import { OpenCvProvider } from 'opencv-react';
+import { useState } from 'react';
+
+import SudokuSolver from './components';
 
 export default function App() {
+  const [loading, setLoading] = useState(true);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <OpenCvProvider
+      onLoad={() => setLoading(false)}
+      openCvPath={`${process.env.PUBLIC_URL}/opencv.js`}
+    >
+      {loading ? <i>Loading...</i> : <SudokuSolver />}
+    </OpenCvProvider>
   );
 }
