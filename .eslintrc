@@ -47,6 +47,12 @@
         "allowForLoopAfterthoughts": true
       }
     ],
+    "no-param-reassign": [
+      "error",
+      {
+        "props": false
+      }
+    ],
     // No longer needed, as of React v17
     "react/react-in-jsx-scope": "off",
     "simple-import-sort/imports": "error"
