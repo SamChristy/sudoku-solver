@@ -1,3 +1,5 @@
+import './App.scss';
+
 import { OpenCvProvider } from 'opencv-react';
 import { useState } from 'react';
 
