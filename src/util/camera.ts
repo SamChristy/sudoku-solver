@@ -1,5 +1,9 @@
+/**
+ * Used for getting the best-possible camera and configuration from `MediaDevices.getUserMedia()`.
+ */
 const idealCameraConstraints = {
-  width: { ideal: window.innerWidth },
+  width: { ideal: 4096 },
+  height: { ideal: 2160 },
   facingMode: { ideal: 'environment' },
   focusMode: { ideal: 'continuous' },
   whiteBalance: { ideal: 'continuous' },
@@ -31,7 +35,7 @@ export const loadCameraStream = async (videoElement: HTMLVideoElement) => {
   const constraints = {
     video: {
       ...idealCameraConstraints,
-      // Fall back to the OS-selected camera, if our heuristic choose one.
+      // Fall back to the OS-selected camera, if our heuristic can't choose one.
       deviceId: camera?.deviceId ? camera.deviceId : undefined,
     },
     audio: false,
