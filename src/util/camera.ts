@@ -43,5 +43,5 @@ export const loadCameraStream = async (videoElement: HTMLVideoElement) => {
   const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
   videoElement.srcObject = stream;
-  videoElement.play();
+  await videoElement.play();
 };
