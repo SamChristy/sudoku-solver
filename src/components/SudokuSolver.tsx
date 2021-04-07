@@ -1,22 +1,45 @@
-import { useOpenCv } from 'opencv-react';
-import { useEffect, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 
-import { loadCameraStream } from '../util/camera';
+import { getFrame, loadCameraStream, turnOffCamera } from '../util/camera';
+import { extractSudoku } from '../util/sudoku';
 
 export default function SudokuSolver() {
-  const { cv } = useOpenCv();
-  console.log('Loaded 👍', cv);
-
   const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const frameRef = useRef(0);
 
-  useEffect(() => {
-    if (videoRef.current) loadCameraStream(videoRef.current);
-  }, [videoRef]);
+  const processStream = useCallback((input: HTMLVideoElement, output: HTMLCanvasElement) => {
+    const frameData = cv.matFromImageData(getFrame(input));
+
+    extractSudoku(frameData);
+    cv.imshow(output, frameData);
+    frameData.delete();
+
+    frameRef.current = requestAnimationFrame(() => processStream(input, output));
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!videoRef.current || !canvasRef.current) return () => {};
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const init = async () => {
+      await loadCameraStream(video, { width: 800, height: 800 });
+      processStream(video, canvas);
+    };
+
+    init();
+
+    return () => {
+      cancelAnimationFrame(frameRef.current);
+      turnOffCamera(video);
+    };
+  }, [processStream]);
 
   return (
     <>
       <h1>🧮 Sudoku Solver</h1>
       <video ref={videoRef} muted />
+      <canvas ref={canvasRef} />
     </>
   );
 }

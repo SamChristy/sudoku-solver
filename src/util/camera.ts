@@ -1,3 +1,8 @@
+interface Resolution {
+  width: number;
+  height: number;
+}
+
 /**
  * Used for getting the best-possible camera and configuration from `MediaDevices.getUserMedia()`.
  */
@@ -26,22 +31,42 @@ export const identifyPrimaryCamera = async (): Promise<MediaDeviceInfo | null> =
 };
 
 /**
- * Loads video stream into the supplied <video /> element.
- *
- * @param videoElement
+ *  Loads video stream into the supplied <video /> element.
  */
-export const loadCameraStream = async (videoElement: HTMLVideoElement) => {
+export const loadCameraStream = async (videoElement: HTMLVideoElement, dimensions?: Resolution) => {
   const camera = await identifyPrimaryCamera();
   const constraints = {
     video: {
       ...idealCameraConstraints,
       // Fall back to the OS-selected camera, if our heuristic can't choose one.
       deviceId: camera?.deviceId ? camera.deviceId : undefined,
+      ...(dimensions && {
+        width: { ideal: dimensions.width },
+        height: { ideal: dimensions.height },
+      }),
     },
     audio: false,
   };
-  const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
-  videoElement.srcObject = stream;
+  videoElement.srcObject = await navigator.mediaDevices.getUserMedia(constraints);
   await videoElement.play();
+};
+
+export const getFrame = (video: HTMLVideoElement): ImageData | null => {
+  const buffer = document.createElement('canvas');
+  buffer.width = video.videoWidth;
+  buffer.height = video.videoHeight;
+  const ctx = buffer.getContext('2d');
+  if (!ctx) return null;
+
+  ctx.drawImage(video, 0, 0);
+  return ctx.getImageData(0, 0, buffer.width, buffer.height);
+};
+
+/**
+ * Ends any streams associated with the <video />, so that the user's camera light turns off.
+ */
+export const turnOffCamera = (videoElement: HTMLVideoElement) => {
+  const stream = videoElement.srcObject as MediaStream;
+  stream.getVideoTracks()[0].stop();
 };
