@@ -1,7 +1,6 @@
 /* eslint-disable */
 declare namespace cv {
   import ClassHandle = cv.asmLibraryArg.ClassHandle;
-
   export function read(...args: any): any;
   export function readAsync(...args: any): any;
   export function arguments(...args: any): any;
@@ -1073,10 +1072,12 @@ declare namespace cv {
     set: any;
   }
   export class Mat {
+    cols: any;
+    rows: any;
     constructor(...args: any) {}
     static ones(width: number, height: number, CV_8U: (...args: any) => any): ClassHandle {}
-
     delete() {}
+    static zeros(cols: number, rows: number, type: number) {}
   }
   export function rotatedRectPoints(...args: any): any;
   export function rotatedRectBoundingRect(...args: any): any;
@@ -2160,49 +2161,31 @@ declare namespace cv {
   export function DNN_TARGET_VULKAN(...args: any): any;
   export function FLAGS_EXPAND_SAME_NAMES(...args: any): any;
   export function FLAGS_MAPPING(...args: any): any;
-
   export function FLAGS_NONE(...args: any): any;
-
   export function IMPL_IPP(...args: any): any;
-
   export function IMPL_OPENCL(...args: any): any;
-
   export function IMPL_PLAIN(...args: any): any;
-
   export function TYPE_FUN(...args: any): any;
-
   export function TYPE_GENERAL(...args: any): any;
-
   export function TYPE_MARKER(...args: any): any;
-
   export function TYPE_WRAPPER(...args: any): any;
-
   export function imread(...args: any): any;
-
   export function imshow(...args: any): any;
-
   export class VideoCapture {
     constructor(videoElement: HTMLVideoElement);
-
     read: (src: Mat) => {};
   }
-
   export function Range(...args: any): any;
-
   export function Point(...args: any): any;
-
   export class Size {
     constructor(width: number, height: number): any {}
   }
-
   export function Rect(...args: any): any;
-
   export function RotatedRect(...args: any): any;
-
-  export function Scalar(...args: any): any;
-
+  export class Scalar {
+    constructor(x: number, y: number, z: number): any {}
+  }
   export function MinMaxLoc(...args: any): any;
-
   export function Circle(...args: any): any;
   export function TermCriteria(...args: any): any;
   export function matFromArray(...args: any): any;
