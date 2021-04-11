@@ -1,7 +1,7 @@
 import { useCallback, useLayoutEffect, useRef } from 'react';
 
 import { getFrame, loadCameraStream, turnOffCamera } from '../util/camera';
-import { extractSudoku } from '../util/sudoku';
+import { findSudokuGrid } from '../util/sudoku';
 
 export default function SudokuSolver() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -11,8 +11,10 @@ export default function SudokuSolver() {
   const processStream = useCallback((input: HTMLVideoElement, output: HTMLCanvasElement) => {
     const frameData = cv.matFromImageData(getFrame(input));
 
-    extractSudoku(frameData);
-    cv.imshow(output, frameData);
+    const result = findSudokuGrid(frameData);
+    cv.imshow(output, result);
+
+    result.delete();
     frameData.delete();
 
     frameRef.current = requestAnimationFrame(() => processStream(input, output));

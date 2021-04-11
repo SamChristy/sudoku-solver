@@ -1,6 +1,7 @@
 /* eslint-disable */
 declare namespace cv {
   import ClassHandle = cv.asmLibraryArg.ClassHandle;
+
   export function read(...args: any): any;
   export function readAsync(...args: any): any;
   export function arguments(...args: any): any;
@@ -1056,6 +1057,7 @@ declare namespace cv {
     size: any;
     get: any;
     set: any;
+    delete() {}
   }
   export class RectVector {
     push_back: any;
@@ -1077,7 +1079,9 @@ declare namespace cv {
     constructor(...args: any) {}
     static ones(width: number, height: number, CV_8U: (...args: any) => any): ClassHandle {}
     delete() {}
-    static zeros(cols: number, rows: number, type: number) {}
+    static zeros(cols: number, rows: number, type: (...args: any) => any): cv.Mat {}
+
+    size: () => { width: number; height: number };
   }
   export function rotatedRectPoints(...args: any): any;
   export function rotatedRectBoundingRect(...args: any): any;
