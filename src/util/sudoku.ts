@@ -5,9 +5,10 @@ const LINE_COLOUR = 255;
 const THRESHOLD_BLUR_RADIUS = 5;
 const THRESHOLD_NORM = 2;
 const THICKNESS_INCREASE = 0; // 👈 Do we need this stage? 🤔
-const BOX_DETECTION_THRESHOLD = 0.005;
+const BOX_DETECTION_THRESHOLD = 0.01;
 const MIN_SQUARE_SIZE = 10000;
 const SQUARE_SHAPE_THRESHOLD = 0.7;
+const CONTOUR_LENGTH_LIMIT = 797; // TODO: Calculate dynamically!
 
 const isSquarish = (contour: cv.Mat): boolean => {
   const simplified = new cv.Mat();
@@ -28,7 +29,10 @@ const isSquarish = (contour: cv.Mat): boolean => {
     const longest = sortedLengths.pop() || 1000;
     //                                       👆 Placate TypeScript... 🙄
 
-    return sortedLengths.every(length => length > SQUARE_SHAPE_THRESHOLD * longest);
+    return (
+      longest < CONTOUR_LENGTH_LIMIT &&
+      sortedLengths.every(length => length > SQUARE_SHAPE_THRESHOLD * longest)
+    );
   }
 
   return false;
