@@ -1,9 +1,38 @@
+import { measureSides } from './maths';
+
 const BLUR_RADIUS = 11;
 const LINE_COLOUR = 255;
 const THRESHOLD_BLUR_RADIUS = 5;
 const THRESHOLD_NORM = 2;
 const THICKNESS_INCREASE = 0; // 👈 Do we need this stage? 🤔
-const BOX_DETECTION_THRESHOLD = 0.01;
+const BOX_DETECTION_THRESHOLD = 0.005;
+const MIN_SQUARE_SIZE = 10000;
+const SQUARE_SHAPE_THRESHOLD = 0.7;
+
+const isSquarish = (contour: cv.Mat): boolean => {
+  const simplified = new cv.Mat();
+  const epsilon = BOX_DETECTION_THRESHOLD * cv.arcLength(contour, true);
+
+  cv.approxPolyDP(contour, simplified, epsilon, true);
+  const sides = simplified.size().height;
+  const area = cv.contourArea(simplified);
+  const pointVector = Array.from(simplified.data32S);
+  simplified.delete();
+
+  if (sides === 4 && area >= MIN_SQUARE_SIZE) {
+    const coords = Array(4);
+    for (let i = 0; i < 4; i++) coords[i] = pointVector.slice(i * 2, i * 2 + 2);
+
+    // Check that all sides are within ~70% of the longest side.
+    const sortedLengths = measureSides(coords).sort();
+    const longest = sortedLengths.pop() || 1000;
+    //                                       👆 Placate TypeScript... 🙄
+
+    return sortedLengths.every(length => length > SQUARE_SHAPE_THRESHOLD * longest);
+  }
+
+  return false;
+};
 
 export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
   // Grayscale, to help line-identification.
@@ -38,14 +67,8 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
 
   for (let i = 0; i < contours.size(); i++) {
     const contour = contours.get(i);
-    const approximatedContour = new cv.Mat();
-    const epsilon = BOX_DETECTION_THRESHOLD * cv.arcLength(contour, true);
 
-    // "Normalise" the shapes, so that we can find shapes that are very close to rectangles (As the
-    // image is obviously not a perfect source!).
-    cv.approxPolyDP(contour, approximatedContour, epsilon, true);
-
-    if (approximatedContour.size().height === 4) {
+    if (isSquarish(contour)) {
       cv.drawContours(dst, contours, i, green, 1, cv.LINE_AA, hierarchy);
 
       // const rotatedRect = cv.minAreaRect(contour);
@@ -56,6 +79,8 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
       // for (let j = 0; j < 4; j++)
       //   cv.line(dst, vertices[j], vertices[(j + 1) % 4], red, 1, cv.LINE_AA, 0);
     }
+
+    contour.delete();
   }
 
   // TODO:

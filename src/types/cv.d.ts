@@ -1055,7 +1055,7 @@ declare namespace cv {
     push_back: any;
     resize: any;
     size: any;
-    get: any;
+    get: (n: number) => Mat;
     set: any;
     delete() {}
   }
@@ -1076,6 +1076,7 @@ declare namespace cv {
   export class Mat {
     cols: any;
     rows: any;
+    data32S: Array<number>;
     constructor(...args: any) {}
     static ones(width: number, height: number, CV_8U: (...args: any) => any): ClassHandle {}
     delete() {}
