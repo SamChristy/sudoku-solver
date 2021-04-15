@@ -6,9 +6,9 @@ const THRESHOLD_BLUR_RADIUS = 5;
 const THRESHOLD_NORM = 2;
 const THICKNESS_INCREASE = 0; // 👈 Do we need this stage? 🤔
 const BOX_DETECTION_THRESHOLD = 0.01;
-const MIN_SQUARE_SIZE = 10000;
 const SQUARE_SHAPE_THRESHOLD = 0.7;
-const CONTOUR_LENGTH_LIMIT = 0.99;
+const MIN_SQUARE_AREA = 0.1;
+const MAX_SQUARE_SIZE = 0.99;
 
 const simplifyShape = (contour: cv.Mat): cv.Mat => {
   const simplified = new cv.Mat();
@@ -19,12 +19,13 @@ const simplifyShape = (contour: cv.Mat): cv.Mat => {
 };
 
 const isSquarish = (contour: cv.Mat, container: cv.Mat): boolean => {
-  const sizeLimit = Math.max(container.rows, container.cols) * CONTOUR_LENGTH_LIMIT;
+  const sizeLimit = Math.max(container.rows, container.cols) * MAX_SQUARE_SIZE;
+  const minArea = container.rows * container.cols * MIN_SQUARE_AREA;
   const sides = contour.size().height;
   const area = cv.contourArea(contour);
   const pointVector = Array.from(contour.data32S);
 
-  if (sides === 4 && area >= MIN_SQUARE_SIZE) {
+  if (sides === 4 && area >= minArea) {
     const coords = Array(4);
     for (let i = 0; i < 4; i++) coords[i] = pointVector.slice(i * 2, i * 2 + 2);
 
