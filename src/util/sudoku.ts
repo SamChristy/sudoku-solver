@@ -10,15 +10,18 @@ const MIN_SQUARE_SIZE = 10000;
 const SQUARE_SHAPE_THRESHOLD = 0.7;
 const CONTOUR_LENGTH_LIMIT = 797; // TODO: Calculate dynamically!
 
-const isSquarish = (contour: cv.Mat): boolean => {
+const simplifyShape = (contour: cv.Mat): cv.Mat => {
   const simplified = new cv.Mat();
   const epsilon = BOX_DETECTION_THRESHOLD * cv.arcLength(contour, true);
 
   cv.approxPolyDP(contour, simplified, epsilon, true);
-  const sides = simplified.size().height;
-  const area = cv.contourArea(simplified);
-  const pointVector = Array.from(simplified.data32S);
-  simplified.delete();
+  return simplified;
+};
+
+const isSquarish = (contour: cv.Mat): boolean => {
+  const sides = contour.size().height;
+  const area = cv.contourArea(contour);
+  const pointVector = Array.from(contour.data32S);
 
   if (sides === 4 && area >= MIN_SQUARE_SIZE) {
     const coords = Array(4);
@@ -26,8 +29,8 @@ const isSquarish = (contour: cv.Mat): boolean => {
 
     // Check that all sides are within ~70% of the longest side.
     const sortedLengths = measureSides(coords).sort();
-    const longest = sortedLengths.pop() || 1000;
-    //                                       👆 Placate TypeScript... 🙄
+    const longest = sortedLengths.pop();
+    if (!longest) return false;
 
     return (
       longest < CONTOUR_LENGTH_LIMIT &&
@@ -71,8 +74,9 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
 
   for (let i = 0; i < contours.size(); i++) {
     const contour = contours.get(i);
+    const simplified = simplifyShape(contour);
 
-    if (isSquarish(contour)) {
+    if (isSquarish(simplified)) {
       cv.drawContours(dst, contours, i, green, 1, cv.LINE_AA, hierarchy);
 
       // const rotatedRect = cv.minAreaRect(contour);
@@ -85,6 +89,7 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
     }
 
     contour.delete();
+    simplified.delete();
   }
 
   // TODO:
