@@ -8,7 +8,7 @@ const THICKNESS_INCREASE = 0; // 👈 Do we need this stage? 🤔
 const BOX_DETECTION_THRESHOLD = 0.01;
 const MIN_SQUARE_SIZE = 10000;
 const SQUARE_SHAPE_THRESHOLD = 0.7;
-const CONTOUR_LENGTH_LIMIT = 797; // TODO: Calculate dynamically!
+const CONTOUR_LENGTH_LIMIT = 0.99;
 
 const simplifyShape = (contour: cv.Mat): cv.Mat => {
   const simplified = new cv.Mat();
@@ -18,7 +18,8 @@ const simplifyShape = (contour: cv.Mat): cv.Mat => {
   return simplified;
 };
 
-const isSquarish = (contour: cv.Mat): boolean => {
+const isSquarish = (contour: cv.Mat, container: cv.Mat): boolean => {
+  const sizeLimit = Math.max(container.rows, container.cols) * CONTOUR_LENGTH_LIMIT;
   const sides = contour.size().height;
   const area = cv.contourArea(contour);
   const pointVector = Array.from(contour.data32S);
@@ -33,7 +34,7 @@ const isSquarish = (contour: cv.Mat): boolean => {
     if (!longest) return false;
 
     return (
-      longest < CONTOUR_LENGTH_LIMIT &&
+      longest < sizeLimit &&
       sortedLengths.every(length => length > SQUARE_SHAPE_THRESHOLD * longest)
     );
   }
@@ -76,7 +77,7 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
     const contour = contours.get(i);
     const simplified = simplifyShape(contour);
 
-    if (isSquarish(simplified)) {
+    if (isSquarish(simplified, src)) {
       cv.drawContours(dst, contours, i, green, 1, cv.LINE_AA, hierarchy);
 
       // const rotatedRect = cv.minAreaRect(contour);
