@@ -1,47 +1,10 @@
-import { measureSides } from './maths';
+import { isContourSquarish, simplifyContour } from './opencv';
 
 const BLUR_RADIUS = 11;
 const LINE_COLOUR = 255;
 const THRESHOLD_BLUR_RADIUS = 5;
 const THRESHOLD_NORM = 2;
 const THICKNESS_INCREASE = 0; // 👈 Do we need this stage? 🤔
-const BOX_DETECTION_THRESHOLD = 0.01;
-const SQUARE_SHAPE_THRESHOLD = 0.7;
-const MIN_SQUARE_AREA = 0.1;
-const MAX_SQUARE_SIZE = 0.99;
-
-const simplifyShape = (contour: cv.Mat): cv.Mat => {
-  const simplified = new cv.Mat();
-  const epsilon = BOX_DETECTION_THRESHOLD * cv.arcLength(contour, true);
-
-  cv.approxPolyDP(contour, simplified, epsilon, true);
-  return simplified;
-};
-
-const isSquarish = (contour: cv.Mat, container: cv.Mat): boolean => {
-  const sizeLimit = Math.max(container.rows, container.cols) * MAX_SQUARE_SIZE;
-  const minArea = container.rows * container.cols * MIN_SQUARE_AREA;
-  const sides = contour.size().height;
-  const area = cv.contourArea(contour);
-  const pointVector = Array.from(contour.data32S);
-
-  if (sides === 4 && area >= minArea) {
-    const coords = Array(4);
-    for (let i = 0; i < 4; i++) coords[i] = pointVector.slice(i * 2, i * 2 + 2);
-
-    // Check that all sides are within ~70% of the longest side.
-    const sortedLengths = measureSides(coords).sort();
-    const longest = sortedLengths.pop();
-    if (!longest) return false;
-
-    return (
-      longest < sizeLimit &&
-      sortedLengths.every(length => length > SQUARE_SHAPE_THRESHOLD * longest)
-    );
-  }
-
-  return false;
-};
 
 export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
   // Grayscale, to help line-identification.
@@ -76,9 +39,9 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
 
   for (let i = 0; i < contours.size(); i++) {
     const contour = contours.get(i);
-    const simplified = simplifyShape(contour);
+    const simplified = simplifyContour(contour);
 
-    if (isSquarish(simplified, src)) {
+    if (isContourSquarish(simplified, src)) {
       cv.drawContours(dst, contours, i, green, 1, cv.LINE_AA, hierarchy);
 
       // const rotatedRect = cv.minAreaRect(contour);
@@ -94,16 +57,7 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
     simplified.delete();
   }
 
-  // TODO:
-  //    1. Find all rectangles above a certain size (e.g. 25% of viewport).
-  //      1.1 ☝️ a frame guide would really help here.
-  //    2. Sort the rectangles by descending order of size.
-  //    3. For each rectangle:
-  //      3.1 Look for at least ~30 similarly-sized rectangles inside it!?
-  //        🤔 Or maybe just some text ROI!?
-  //      3.2 Look for some rectangles ~1/9th the height and width!?
-  //          or ~1/3, as they sometimes come through
-  //
+  // Find the biggest grid!
   //   We have our grid, now:
   //    - Transform grid, to "flatten it out".
   //    - Just slice the image into 81 squares, cropping by a sensible amount and hope for the best
