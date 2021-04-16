@@ -37,27 +37,38 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
 
   cv.findContours(src, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
 
+  let largestArea = 0;
+  let largestSquare = null;
+
   for (let i = 0; i < contours.size(); i++) {
     const contour = contours.get(i);
     const simplified = simplifyContour(contour);
 
     if (isContourSquarish(simplified, src)) {
-      cv.drawContours(dst, contours, i, green, 1, cv.LINE_AA, hierarchy);
+      const area = cv.contourArea(simplified);
+      if (area > largestArea) {
+        largestArea = area;
+        largestSquare = simplified.clone();
+      }
 
-      // const rotatedRect = cv.minAreaRect(contour);
-      // // @ts-ignore
-      // const vertices = cv.RotatedRect.points(rotatedRect);
-      // const red = new cv.Scalar(255, 0, 0);
-      // // draw rotatedRect
-      // for (let j = 0; j < 4; j++)
-      //   cv.line(dst, vertices[j], vertices[(j + 1) % 4], red, 1, cv.LINE_AA, 0);
+      cv.drawContours(dst, contours, i, green, 1, cv.LINE_AA, hierarchy);
     }
 
     contour.delete();
     simplified.delete();
   }
 
-  // Find the biggest grid!
+  if (largestSquare !== null) {
+    const rotatedRect = cv.minAreaRect(largestSquare);
+    // @ts-ignore
+    const vertices = cv.RotatedRect.points(rotatedRect);
+    const red = new cv.Scalar(255, 0, 0);
+    for (let j = 0; j < 4; j++)
+      cv.line(dst, vertices[j], vertices[(j + 1) % 4], red, 1, cv.LINE_AA, 0);
+
+    largestSquare.delete();
+  }
+
   //   We have our grid, now:
   //    - Transform grid, to "flatten it out".
   //    - Just slice the image into 81 squares, cropping by a sensible amount and hope for the best

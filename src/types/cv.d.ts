@@ -1077,12 +1077,14 @@ declare namespace cv {
     cols: any;
     rows: any;
     data32S: Array<number>;
+
     constructor(...args: any) {}
     static ones(width: number, height: number, CV_8U: (...args: any) => any): ClassHandle {}
     delete() {}
     static zeros(cols: number, rows: number, type: (...args: any) => any): cv.Mat {}
-
     size: () => { width: number; height: number };
+
+    clone(): Mat;
   }
   export function rotatedRectPoints(...args: any): any;
   export function rotatedRectBoundingRect(...args: any): any;
