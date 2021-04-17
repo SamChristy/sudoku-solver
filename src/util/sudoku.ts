@@ -4,7 +4,6 @@ const BLUR_RADIUS = 11;
 const LINE_COLOUR = 255;
 const THRESHOLD_BLUR_RADIUS = 5;
 const THRESHOLD_NORM = 2;
-const THICKNESS_INCREASE = 0; // 👈 Do we need this stage? 🤔
 
 export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
   // Grayscale, to help line-identification.
@@ -22,11 +21,6 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
     THRESHOLD_BLUR_RADIUS,
     THRESHOLD_NORM
   );
-
-  // Increase thickness of lines, to help fill in any gaps.
-  const kernel = cv.Mat.ones(THICKNESS_INCREASE, THICKNESS_INCREASE, cv.CV_8U);
-  cv.erode(src, src, kernel);
-  kernel.delete();
 
   // Find the largest squares in the image and try to work out whether or not they're sudokus,
   // choosing the best suitable candidate.
