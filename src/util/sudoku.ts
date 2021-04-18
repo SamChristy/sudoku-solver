@@ -1,4 +1,4 @@
-import { isContourSquarish, simplifyContour } from './opencv';
+import { cropAndFlatten, isContourSquarish, simplifyContour } from './opencv';
 
 const BLUR_RADIUS = 11;
 const LINE_COLOUR = 255;
@@ -6,6 +6,7 @@ const THRESHOLD_BLUR_RADIUS = 5;
 const THRESHOLD_NORM = 2;
 
 export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
+  const original = src.clone();
   // Grayscale, to help line-identification.
   cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY, 0);
   // Blur, to smooth out noise.
@@ -53,14 +54,15 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
   }
 
   if (largestSquare !== null) {
-    const rotatedRect = cv.minAreaRect(largestSquare);
-    // @ts-ignore
-    const vertices = cv.RotatedRect.points(rotatedRect);
-    const red = new cv.Scalar(255, 0, 0);
-    for (let j = 0; j < 4; j++)
-      cv.line(dst, vertices[j], vertices[(j + 1) % 4], red, 1, cv.LINE_AA, 0);
+    contours.delete();
+    hierarchy.delete();
+    dst.delete();
 
-    largestSquare.delete();
+    const r = cropAndFlatten(original, largestSquare);
+    original.delete();
+    largestSquare?.delete();
+
+    return r;
   }
 
   //   We have our grid, now:

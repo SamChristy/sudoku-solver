@@ -1,4 +1,4 @@
-import { measureSides } from './maths';
+import { closest, measureSides } from './maths';
 
 const BOX_DETECTION_THRESHOLD = 0.01;
 const SQUARE_SHAPE_THRESHOLD = 0.7;
@@ -45,4 +45,43 @@ export const isContourSquarish = (contour: cv.Mat, container: cv.Mat): boolean =
   }
 
   return false;
+};
+
+export const cropAndFlatten = (src: cv.Mat, rectangleContour: cv.Mat): cv.Mat => {
+  const [sourceWidth, sourceHeight] = [src.rows, src.cols];
+  const flattened = cv.Mat.zeros(sourceWidth, sourceHeight, cv.CV_8UC3);
+  const size = new cv.Size(sourceWidth, sourceHeight);
+  const contourCoords = getContourPathCoords(rectangleContour);
+
+  console.log('--------------');
+  console.log(Array.from(rectangleContour.data32S));
+  console.log({ contourCoords });
+  console.log([0, 0, sourceWidth, 0, 0, sourceHeight, sourceWidth, sourceHeight]);
+  console.log('--------------');
+
+  const topLeft = closest([0, 0], contourCoords);
+  const topRight = closest([sourceWidth, 0], contourCoords);
+  const bottomLeft = closest([0, sourceHeight], contourCoords);
+  const bottomRight = closest([sourceWidth, sourceHeight], contourCoords);
+
+  const srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, Array.from(rectangleContour.data32S));
+  const dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
+    0,
+    0,
+    sourceWidth,
+    0,
+    sourceWidth,
+    sourceHeight,
+    0,
+    sourceHeight,
+  ]);
+
+  const m = cv.getPerspectiveTransform(srcTri, dstTri);
+  cv.warpPerspective(src, flattened, m, size, cv.INTER_LINEAR, cv.BORDER_CONSTANT);
+
+  m.delete();
+  srcTri.delete();
+  dstTri.delete();
+
+  return flattened;
 };
