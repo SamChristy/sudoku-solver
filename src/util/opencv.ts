@@ -51,20 +51,22 @@ export const cropAndFlatten = (src: cv.Mat, rectangleContour: cv.Mat): cv.Mat =>
   const [sourceWidth, sourceHeight] = [src.rows, src.cols];
   const flattened = cv.Mat.zeros(sourceWidth, sourceHeight, cv.CV_8UC3);
   const size = new cv.Size(sourceWidth, sourceHeight);
+
+  // Find the corners of the contour (this doesn't always work...)
   const contourCoords = getContourPathCoords(rectangleContour);
-
-  console.log('--------------');
-  console.log(Array.from(rectangleContour.data32S));
-  console.log({ contourCoords });
-  console.log([0, 0, sourceWidth, 0, 0, sourceHeight, sourceWidth, sourceHeight]);
-  console.log('--------------');
-
   const topLeft = closest([0, 0], contourCoords);
   const topRight = closest([sourceWidth, 0], contourCoords);
   const bottomLeft = closest([0, sourceHeight], contourCoords);
   const bottomRight = closest([sourceWidth, sourceHeight], contourCoords);
 
-  const srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, Array.from(rectangleContour.data32S));
+  // Produce a "transformation matrix" and apply it to the warp
+  // {@see https://docs.opencv.org/3.4/dd/d52/tutorial_js_geometric_transformations.html}
+  const srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
+    ...topLeft,
+    ...topRight,
+    ...bottomRight,
+    ...bottomLeft,
+  ]);
   const dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
     0,
     0,
@@ -75,11 +77,10 @@ export const cropAndFlatten = (src: cv.Mat, rectangleContour: cv.Mat): cv.Mat =>
     0,
     sourceHeight,
   ]);
+  const transformMatrix = cv.getPerspectiveTransform(srcTri, dstTri);
+  cv.warpPerspective(src, flattened, transformMatrix, size, cv.INTER_LINEAR, cv.BORDER_CONSTANT);
 
-  const m = cv.getPerspectiveTransform(srcTri, dstTri);
-  cv.warpPerspective(src, flattened, m, size, cv.INTER_LINEAR, cv.BORDER_CONSTANT);
-
-  m.delete();
+  transformMatrix.delete();
   srcTri.delete();
   dstTri.delete();
 
