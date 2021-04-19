@@ -53,25 +53,23 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
     simplified.delete();
   }
 
-  if (largestSquare !== null) {
-    contours.delete();
-    hierarchy.delete();
-    dst.delete();
+  contours.delete();
+  hierarchy.delete();
 
-    const r = cropAndFlatten(original, largestSquare);
+  if (largestSquare !== null) {
+    const croppedOriginal = cropAndFlatten(original, largestSquare);
+
+    dst.delete();
     original.delete();
     largestSquare?.delete();
 
-    return r;
+    return croppedOriginal;
   }
 
-  //   We have our grid, now:
-  //    - Transform grid, to "flatten it out".
+  original.delete();
+
   //    - Just slice the image into 81 squares, cropping by a sensible amount and hope for the best
   //      🤞 + somehow identify & ignore empty squares...
-
-  contours.delete();
-  hierarchy.delete();
 
   return dst;
 };
