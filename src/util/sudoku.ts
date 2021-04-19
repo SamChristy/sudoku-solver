@@ -1,4 +1,4 @@
-import { cropAndFlatten, isContourSquarish, simplifyContour } from './opencv';
+import { cropAndFlatten, isContourSquarish, simplifyContour } from './cv';
 
 const BLUR_RADIUS = 11;
 const LINE_COLOUR = 255;

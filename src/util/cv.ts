@@ -1,4 +1,4 @@
-import { closest, measureSides } from './maths';
+import { closest, measureSides } from './geometry';
 
 const BOX_DETECTION_THRESHOLD = 0.01;
 const SQUARE_SHAPE_THRESHOLD = 0.7;
@@ -52,7 +52,7 @@ export const cropAndFlatten = (src: cv.Mat, rectangleContour: cv.Mat): cv.Mat =>
   const flattened = cv.Mat.zeros(sourceWidth, sourceHeight, cv.CV_8UC3);
   const size = new cv.Size(sourceWidth, sourceHeight);
 
-  // Find the corners of the contour (this doesn't always work...)
+  // Find the corners of the contour (this won't work if the grid is too close to 45°).
   const contourCoords = getContourPathCoords(rectangleContour);
   const topLeft = closest([0, 0], contourCoords);
   const topRight = closest([sourceWidth, 0], contourCoords);
@@ -60,7 +60,7 @@ export const cropAndFlatten = (src: cv.Mat, rectangleContour: cv.Mat): cv.Mat =>
   const bottomRight = closest([sourceWidth, sourceHeight], contourCoords);
 
   // Produce a "transformation matrix" and apply it to the warp
-  // {@see https://docs.opencv.org/3.4/dd/d52/tutorial_js_geometric_transformations.html}
+  // see: https://docs.opencv.org/3.4/dd/d52/tutorial_js_geometric_transformations.html
   const srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
     ...topLeft,
     ...topRight,
