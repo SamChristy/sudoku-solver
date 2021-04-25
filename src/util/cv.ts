@@ -86,3 +86,21 @@ export const cropAndFlatten = (src: cv.Mat, rectangleContour: cv.Mat): cv.Mat =>
 
   return flattened;
 };
+
+export const split = (src: cv.Mat, rows: number, columns: number): cv.Mat[][] => {
+  const squares: cv.Mat[][] = new Array(rows);
+  const squareWidth = src.rows / rows;
+  const squareHeight = src.cols / columns;
+
+  for (let r = 0; r < rows; r++) {
+    squares[r] = new Array(columns);
+    for (let c = 0; c < columns; c++) {
+      const [x, y] = [r * squareHeight, c * squareWidth];
+      // @ts-ignore
+      const crop = new cv.Rect(x, y, squareWidth, squareHeight);
+      squares[r][c] = src.roi(crop);
+    }
+  }
+
+  return squares;
+};

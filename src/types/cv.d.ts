@@ -1083,8 +1083,9 @@ declare namespace cv {
     delete() {}
     static zeros(cols: number, rows: number, type: (...args: any) => any): cv.Mat {}
     size: () => { width: number; height: number };
-
     clone(): Mat;
+    doubleAt(number: number, number2: number) {}
+    roi(crop: any): Mat;
   }
   export function rotatedRectPoints(...args: any): any;
   export function rotatedRectBoundingRect(...args: any): any;

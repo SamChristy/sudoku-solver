@@ -1,5 +1,7 @@
-import { cropAndFlatten, isContourSquarish, simplifyContour } from './cv';
+import { cropAndFlatten, isContourSquarish, simplifyContour, split } from './cv';
 
+const ROWS = 9;
+const COLUMNS = 9;
 const BLUR_RADIUS = 11;
 const LINE_COLOUR = 255;
 const THRESHOLD_BLUR_RADIUS = 5;
@@ -58,6 +60,16 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
 
   if (largestSquare !== null) {
     const croppedOriginal = cropAndFlatten(original, largestSquare);
+
+    const squares = split(croppedOriginal, ROWS, COLUMNS);
+    console.log(squares);
+    squares.forEach(row => row.forEach(mat => mat.delete()));
+
+    const mean = new cv.Mat(1, 4, cv.CV_64F);
+    const stdDev = new cv.Mat(1, 4, cv.CV_64F);
+    cv.meanStdDev(croppedOriginal, mean, stdDev);
+
+    console.log(mean.doubleAt(0, 0));
 
     dst.delete();
     original.delete();
