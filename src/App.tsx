@@ -9,11 +9,20 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   return (
-    <OpenCvProvider
-      onLoad={() => setLoading(false)}
-      openCvPath={`${process.env.PUBLIC_URL}/opencv.js`}
-    >
-      {loading ? <i>Loading...</i> : <SudokuSolver />}
-    </OpenCvProvider>
+    <>
+      <button
+        style={{ position: 'fixed', top: '10px', left: '10px' }}
+        onClick={() => setLoading(!loading)}
+        type="button"
+      >
+        {loading ? 'mount' : 'unmout'}
+      </button>
+      <OpenCvProvider
+        onLoad={() => setLoading(false)}
+        openCvPath={`${process.env.PUBLIC_URL}/opencv.js`}
+      >
+        {loading ? <i>Loading...</i> : <SudokuSolver />}
+      </OpenCvProvider>
+    </>
   );
 }
