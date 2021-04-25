@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { getFrame, loadCameraStream, turnOffCamera } from '../util/camera';
 import { findSudokuGrid } from '../util/sudoku';
@@ -20,7 +20,7 @@ export default function SudokuSolver() {
     frameRef.current = requestAnimationFrame(() => processStream(input, output));
   }, []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!videoRef.current || !canvasRef.current) return () => {};
     const video = videoRef.current;
     const canvas = canvasRef.current;
@@ -40,7 +40,7 @@ export default function SudokuSolver() {
   return (
     <>
       <h1>🧮 Sudoku Solver</h1>
-      <video ref={videoRef} muted />
+      <video ref={videoRef} muted playsInline />
       <canvas ref={canvasRef} />
     </>
   );

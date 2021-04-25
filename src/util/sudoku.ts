@@ -69,7 +69,7 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
   original.delete();
 
   //    - Just slice the image into 81 squares, cropping by a sensible amount and hope for the best
-  //      🤞 + somehow identify & ignore empty squares...
+  //      🤞 + use cv.meanStdDev() to identify empty squares
 
   return dst;
 };

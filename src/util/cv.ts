@@ -59,7 +59,7 @@ export const cropAndFlatten = (src: cv.Mat, rectangleContour: cv.Mat): cv.Mat =>
   const bottomLeft = closest([0, sourceHeight], contourCoords);
   const bottomRight = closest([sourceWidth, sourceHeight], contourCoords);
 
-  // Produce a "transformation matrix" and apply it to the warp
+  // Produce a transformation matrix and apply it to the warp
   // see: https://docs.opencv.org/3.4/dd/d52/tutorial_js_geometric_transformations.html
   const srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
     ...topLeft,
