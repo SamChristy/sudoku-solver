@@ -1,4 +1,6 @@
+node_modules/*
 build/*
 public/*
 src/react-app-env.d.ts
-src/serviceWorker.ts
+src/service-worker.ts
+src/serviceWorkerRegistration.ts

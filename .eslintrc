@@ -47,6 +47,7 @@
         "allowForLoopAfterthoughts": true
       }
     ],
+    // For non-string properties on Elements (which can't be set via .setAttribute()).
     "no-param-reassign": [
       "error",
       {
@@ -55,6 +56,13 @@
     ],
     // No longer needed, as of React v17
     "react/react-in-jsx-scope": "off",
-    "simple-import-sort/imports": "error"
+    "simple-import-sort/imports": "error",
+    "@typescript-eslint/lines-between-class-members": [
+      "error",
+      "always",
+      {
+        "exceptAfterSingleLine": true
+      }
+    ]
   }
 }
