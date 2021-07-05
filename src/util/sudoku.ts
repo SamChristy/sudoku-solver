@@ -1,4 +1,11 @@
-import { cropAndFlatten, isContourSquarish, simplifyContour, split } from './cv';
+import {
+  cropAndFlatten,
+  cropCellBorders,
+  isContourSquarish,
+  isEmpty,
+  simplifyContour,
+  split,
+} from './cv';
 
 const ROWS = 9;
 const COLUMNS = 9;
@@ -24,6 +31,8 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
     THRESHOLD_BLUR_RADIUS,
     THRESHOLD_NORM
   );
+
+  const binary = src.clone();
 
   // Find the largest squares in the image and try to work out whether or not they're sudokus,
   // choosing the best suitable candidate.
@@ -60,28 +69,39 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
 
   if (largestSquare !== null) {
     const croppedOriginal = cropAndFlatten(original, largestSquare);
+    const croppedBinary = cropAndFlatten(binary, largestSquare);
+    const originalSquares = split(croppedOriginal, ROWS, COLUMNS);
+    const binarySquares = split(croppedBinary, ROWS, COLUMNS);
+    const table = document.getElementById('grid1') as HTMLTableElement;
 
-    const squares = split(croppedOriginal, ROWS, COLUMNS);
-    console.log(squares);
-    squares.forEach(row => row.forEach(mat => mat.delete()));
+    table.innerHTML = '';
 
-    const mean = new cv.Mat(1, 4, cv.CV_64F);
-    const stdDev = new cv.Mat(1, 4, cv.CV_64F);
-    cv.meanStdDev(croppedOriginal, mean, stdDev);
+    binarySquares.forEach(row => {
+      const tableRow = table.insertRow();
+      row.forEach(mat => {
+        const cell = tableRow.insertCell();
+        const canvas = document.createElement('canvas');
+        // const avg = isEmpty(mat);
+        const crop = cropCellBorders(mat);
 
-    console.log(mean.doubleAt(0, 0));
+        cv.imshow(canvas, crop);
+        mat.delete();
+        crop.delete();
 
+        cell.append(canvas); // , String(avg));
+        // cell.style.background = `rgb(${avg}, ${avg}, ${avg})`;
+      });
+    });
+
+    binary.delete();
     dst.delete();
     original.delete();
     largestSquare?.delete();
 
-    return croppedOriginal;
+    return croppedBinary;
   }
 
   original.delete();
-
-  //    - Just slice the image into 81 squares, cropping by a sensible amount and hope for the best
-  //      🤞 + use cv.meanStdDev() to identify empty squares
 
   return dst;
 };

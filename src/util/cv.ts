@@ -4,6 +4,9 @@ const BOX_DETECTION_THRESHOLD = 0.01;
 const SQUARE_SHAPE_THRESHOLD = 0.7;
 const MIN_SQUARE_AREA = 0.1;
 const MAX_SQUARE_SIZE = 0.99;
+const EMPTY_THRESHOLD = 100;
+const MIN_CHAR_AREA = 0.15;
+const MAX_CHAR_AREA = 0.95;
 
 /**
  * Because contours are just a list of numbers, e.g. [x1, y1, x2, y2, x3, y3...].
@@ -104,4 +107,57 @@ export const split = (src: cv.Mat, rows: number, columns: number): cv.Mat[][] =>
   }
 
   return squares;
+};
+
+export const isEmpty = (src: cv.Mat) => {
+  const mean = new cv.Mat(1, 4, cv.CV_64F);
+  const stdDev = new cv.Mat(1, 4, cv.CV_64F);
+  cv.meanStdDev(src, mean, stdDev);
+
+  // console.log(mean.doubleAt(0, 0));
+  // @ts-ignore
+  return Math.round(mean.doubleAt(0, 0));
+
+  // @ts-ignore -- TODO Add missing CV type definitions, to avoid @ts-ignores
+  return mean.doubleAt(0, 0) >= EMPTY_THRESHOLD;
+};
+
+/**
+ * Tesseract is notoriously bad at extracting text from table cells; so we need help it out, by
+ * cropping the cell's contents to remove any edges (which can be mistaken for characters).
+ */
+export const cropCellBorders = (src: cv.Mat): cv.Mat => {
+  const minArea = MIN_CHAR_AREA * src.rows * src.cols;
+  const maxArea = MAX_CHAR_AREA * src.rows * src.cols;
+  const contours = new cv.MatVector();
+  const hierarchy = new cv.Mat();
+  const red = new cv.Scalar(255, 0, 0);
+  const green = new cv.Scalar(0, 255, 0);
+  const dst = cv.Mat.zeros(src.cols, src.rows, cv.CV_8UC3);
+
+  cv.findContours(src, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
+
+  for (let i = 0; i < contours.size(); i++) {
+    const contour = contours.get(i);
+    const cellArea = src.rows * src.cols;
+    const rect = cv.boundingRect(contour);
+    const area = rect.width * rect.height;
+
+    if (area > 0.1 * cellArea && area < 0.8 * cellArea) {
+      console.log(Math.round((area / cellArea) * 100));
+      cv.drawContours(dst, contours, i, green, 1, cv.LINE_AA, hierarchy);
+
+      // @ts-ignore
+      const point1 = new cv.Point(rect.x, rect.y);
+      // @ts-ignore
+      const point2 = new cv.Point(rect.x + rect.width, rect.y + rect.height);
+      cv.rectangle(dst, point1, point2, red, 2, cv.LINE_AA, 0);
+    }
+    contour.delete();
+  }
+
+  contours.delete();
+  hierarchy.delete();
+
+  return dst;
 };

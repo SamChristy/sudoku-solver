@@ -41,7 +41,8 @@ export default function SudokuSolver() {
     <>
       <h1>🧮 Sudoku Solver</h1>
       <video ref={videoRef} muted playsInline />
-      <canvas ref={canvasRef} />
+      <canvas ref={canvasRef} style={{ display: 'none' }} />
+      <table id="grid1" />
     </>
   );
 }
