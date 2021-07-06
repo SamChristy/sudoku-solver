@@ -1,11 +1,4 @@
-import {
-  cropAndFlatten,
-  cropCellBorders,
-  isContourSquarish,
-  isEmpty,
-  simplifyContour,
-  split,
-} from './cv';
+import { cropAndFlatten, cropCellBorders, isContourSquarish, simplifyContour, split } from './cv';
 
 const ROWS = 9;
 const COLUMNS = 9;
@@ -70,28 +63,31 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
   if (largestSquare !== null) {
     const croppedOriginal = cropAndFlatten(original, largestSquare);
     const croppedBinary = cropAndFlatten(binary, largestSquare);
-    const originalSquares = split(croppedOriginal, ROWS, COLUMNS);
-    const binarySquares = split(croppedBinary, ROWS, COLUMNS);
+    const originalCells = split(croppedOriginal, ROWS, COLUMNS);
+    const binaryCells = split(croppedBinary, ROWS, COLUMNS);
     const table = document.getElementById('grid1') as HTMLTableElement;
 
     table.innerHTML = '';
 
-    binarySquares.forEach(row => {
+    for (let r = 0; r < ROWS; r++) {
       const tableRow = table.insertRow();
-      row.forEach(mat => {
+
+      for (let c = 0; c < COLUMNS; c++) {
+        const originalCell = originalCells[r][c];
+        const binaryCell = binaryCells[r][c];
         const cell = tableRow.insertCell();
         const canvas = document.createElement('canvas');
-        // const avg = isEmpty(mat);
-        const crop = cropCellBorders(mat);
+        const cropped = cropCellBorders(originalCell, binaryCell);
 
-        cv.imshow(canvas, crop);
-        mat.delete();
-        crop.delete();
+        if (cropped !== null) {
+          cv.imshow(canvas, cropped);
+          cell.append(canvas);
+        }
 
-        cell.append(canvas); // , String(avg));
-        // cell.style.background = `rgb(${avg}, ${avg}, ${avg})`;
-      });
-    });
+        originalCell.delete();
+        binaryCell.delete();
+      }
+    }
 
     binary.delete();
     dst.delete();

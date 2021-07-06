@@ -16,3 +16,16 @@ export const closest = (reference: number[], points: number[][]): number[] => {
 
 export const measureSides = (coords: number[][]): number[] =>
   coords.map((coord, i) => distance(coord, coords[i < coords.length - 1 ? i + 1 : 0]));
+
+type Rectangle = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+export const isPointInsideRect = (point: number[], rect: Rectangle) =>
+  point[0] >= rect.x &&
+  point[1] >= rect.y &&
+  point[0] <= rect.x + rect.width &&
+  point[0] <= rect.y + rect.height;
