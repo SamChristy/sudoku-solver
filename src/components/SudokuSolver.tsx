@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { createWorker, PSM } from 'tesseract.js';
+import { createWorker } from 'tesseract.js';
 
 import { getFrame, loadCameraStream, turnOffCamera } from '../util/camera';
 import { findSudokuGrid } from '../util/sudoku';
@@ -31,8 +31,8 @@ export default function SudokuSolver() {
           // @ts-ignore
           tessedit_pageseg_mode: '10',
           tessedit_char_whitelist: '0123456789',
-          load_system_dawg: false,
-          load_freq_dawg: false,
+          // @ts-ignore
+          tessedit_ocr_engine_mode: 0,
         });
         Array.from(document.querySelectorAll('canvas')).reduce(
           async (previousPromise, canvas, i) => {
