@@ -31,6 +31,8 @@ export default function SudokuSolver() {
           // @ts-ignore
           tessedit_pageseg_mode: '10',
           tessedit_char_whitelist: '0123456789',
+          load_system_dawg: false,
+          load_freq_dawg: false,
         });
         Array.from(document.querySelectorAll('canvas')).reduce(
           async (previousPromise, canvas, i) => {
@@ -57,7 +59,8 @@ export default function SudokuSolver() {
     const canvas = canvasRef.current;
     const init = async () => {
       // TODO: Experiment with different image sizes/downscaling
-      await loadCameraStream(video, { width: 800, height: 800 });
+      //       Find that analysis of optimal height and downscale the actual chars to that!
+      await loadCameraStream(video, { width: 500, height: 500 });
       processStream(video, canvas);
     };
 
