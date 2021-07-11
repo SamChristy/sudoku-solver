@@ -1,3 +1,4 @@
+import { imgFromCanvas } from './canvas';
 import { cropAndFlatten, cropCellBorders, isContourSquarish, simplifyContour, split } from './cv';
 
 const ROWS = 9;
@@ -81,7 +82,7 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
 
         if (cropped !== null) {
           cv.imshow(canvas, cropped);
-          cell.append(canvas);
+          cell.append(imgFromCanvas(canvas));
         }
 
         originalCell.delete();

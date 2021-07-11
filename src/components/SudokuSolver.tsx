@@ -35,23 +35,19 @@ export default function SudokuSolver() {
           // @ts-ignore
           tessedit_ocr_engine_mode: 0,
         });
-        Array.from(document.querySelectorAll('canvas')).reduce(
-          async (previousPromise, canvas, i) => {
-            await previousPromise;
+        console.log(document.querySelectorAll('img'));
+        Array.from(document.querySelectorAll('img')).reduce(async (previousPromise, img, i) => {
+          await previousPromise;
 
-            if (i >= 1) {
-              console.log(i);
-              return worker.recognize(canvas).then(({ data }) => {
-                console.warn(data);
-                const b = document.createElement('b');
-                b.textContent = data.text;
-                canvas.parentNode?.append(b, `(${Math.round(data.confidence)})`);
-              });
-            }
-            return Promise.resolve();
-          },
-          Promise.resolve()
-        );
+          console.log(i);
+          return worker.recognize(img).then(({ data }) => {
+            console.warn(data);
+            const b = document.createElement('b');
+            b.textContent = data.text;
+            img.parentNode?.append(b, `(${Math.round(data.confidence)})`);
+          });
+          return Promise.resolve();
+        }, Promise.resolve());
       })();
     }
   }, []);

@@ -53,6 +53,7 @@ export const loadCameraStream = async (videoElement: HTMLVideoElement, dimension
 };
 
 export const getFrame = (video: HTMLVideoElement): ImageData | null => {
+  // TODO: See if if it's more efficient to reuse the same buffer and/or offScreenCanvas().
   const buffer = document.createElement('canvas');
   buffer.width = video.videoWidth;
   buffer.height = video.videoHeight;
