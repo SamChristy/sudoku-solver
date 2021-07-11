@@ -31,6 +31,7 @@ export default function SudokuSolver() {
           // @ts-ignore
           tessedit_pageseg_mode: '10',
           tessedit_char_whitelist: '0123456789',
+          user_defined_dpi: '300',
           // @ts-ignore
           tessedit_ocr_engine_mode: 0,
         });
@@ -42,7 +43,9 @@ export default function SudokuSolver() {
               console.log(i);
               return worker.recognize(canvas).then(({ data }) => {
                 console.warn(data);
-                canvas.replaceWith(`${data.text} (${Math.round(data.confidence)})`);
+                const b = document.createElement('b');
+                b.textContent = data.text;
+                canvas.parentNode?.append(b, `(${Math.round(data.confidence)})`);
               });
             }
             return Promise.resolve();
