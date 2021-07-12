@@ -29,11 +29,11 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
   const binary = src.clone();
 
   // Find the largest squares in the image and try to work out whether or not they're sudokus,
-  // choosing the best suitable candidate.
+  // choosing the most suitable candidate.
   const contours = new cv.MatVector();
   const hierarchy = new cv.Mat();
   const green = new cv.Scalar(0, 255, 0);
-  const dst = cv.Mat.zeros(src.cols, src.rows, cv.CV_8UC3);
+  const debugImage = cv.Mat.zeros(src.cols, src.rows, cv.CV_8UC3);
 
   cv.findContours(src, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
 
@@ -44,6 +44,7 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
     const contour = contours.get(i);
     const simplified = simplifyContour(contour);
 
+    // TODO: Add additional constraints (e.g.parallel Hough lines?) to filter out false positives! 🧐
     if (isContourSquarish(simplified, src)) {
       const area = cv.contourArea(simplified);
       if (area > largestArea) {
@@ -51,7 +52,7 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
         largestSquare = simplified.clone();
       }
 
-      cv.drawContours(dst, contours, i, green, 1, cv.LINE_AA, hierarchy);
+      cv.drawContours(debugImage, contours, i, green, 1, cv.LINE_AA, hierarchy);
     }
 
     contour.delete();
@@ -91,16 +92,17 @@ export const findSudokuGrid = (src: cv.Mat): cv.Mat => {
     }
 
     binary.delete();
-    dst.delete();
+    croppedBinary.delete();
+    debugImage.delete();
     original.delete();
     largestSquare?.delete();
 
-    return croppedBinary;
+    return croppedOriginal;
   }
 
   original.delete();
 
-  return dst;
+  return debugImage;
 };
 
 export const solveSudoku = (sudoku: number[][]) => {};

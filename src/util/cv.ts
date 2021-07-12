@@ -169,10 +169,12 @@ export const cropCellBorders = (src: cv.Mat, binary: cv.Mat) => {
     binaryCellContents.delete();
 
     if (!isCellEmpty) {
+      // Padding the contents helps OCR.
       const padding = Math.round(CHAR_PADDING * cellArea ** (1 / 2));
-      // Padding the contents out helps OCR.
+
       largestRect.x = Math.max(largestRect.x - padding, 0);
       largestRect.y = Math.max(largestRect.y - padding, 0);
+      // TODO: Pad tall-thin characters' width a bit more?
       largestRect.width = Math.min(largestRect.width + 2 * padding, src.cols - largestRect.x);
       largestRect.height = Math.min(largestRect.height + 2 * padding, src.rows - largestRect.y);
 
