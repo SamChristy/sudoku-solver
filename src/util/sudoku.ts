@@ -8,7 +8,7 @@ const LINE_COLOUR = 255;
 const THRESHOLD_BLUR_RADIUS = 5;
 const THRESHOLD_NORM = 2;
 
-export const extractSudoku = (src: cv.Mat): cv.Mat => {
+export const extractSudoku = (src: cv.Mat): cv.Mat | null => {
   const original = src.clone();
 
   // Grayscale, to help line-identification.
@@ -103,7 +103,7 @@ export const extractSudoku = (src: cv.Mat): cv.Mat => {
 
   original.delete();
 
-  return debugImage;
+  return null;
 };
 
 export const solveSudoku = (sudoku: number[][]) => {};

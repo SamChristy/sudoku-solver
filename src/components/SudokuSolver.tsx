@@ -13,9 +13,9 @@ export default function SudokuSolver() {
     const frameData = cv.matFromImageData(getFrame(input));
     const result = extractSudoku(frameData);
 
-    cv.imshow(output, result);
+    result && cv.imshow(output, result);
 
-    result.delete();
+    result?.delete();
     frameData.delete();
 
     if (!document.getElementsByTagName('tr').length)
