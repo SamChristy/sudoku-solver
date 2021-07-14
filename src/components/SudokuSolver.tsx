@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { createWorker } from 'tesseract.js';
 
 import { getFrame, loadCameraStream, turnOffCamera } from '../util/camera';
-import { findSudokuGrid } from '../util/sudoku';
+import { extractSudoku } from '../util/sudoku';
 
 export default function SudokuSolver() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -11,8 +11,8 @@ export default function SudokuSolver() {
 
   const processStream = useCallback((input: HTMLVideoElement, output: HTMLCanvasElement) => {
     const frameData = cv.matFromImageData(getFrame(input));
+    const result = extractSudoku(frameData);
 
-    const result = findSudokuGrid(frameData);
     cv.imshow(output, result);
 
     result.delete();

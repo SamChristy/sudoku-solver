@@ -1,4 +1,4 @@
-import { closest, isPointInsideRect, measureSides } from './geometry';
+import { closest, isPointInsideRect, measureSides, Point } from './geometry';
 
 const BOX_DETECTION_THRESHOLD = 0.01;
 const SQUARE_SHAPE_THRESHOLD = 0.7;
@@ -15,7 +15,7 @@ const CHAR_PADDING = 0.05;
 /**
  * Because contours are just a list of numbers, e.g. [x1, y1, x2, y2, x3, y3...].
  */
-export const getContourPathCoords = (contour: cv.Mat): number[][] => {
+export const getContourPathCoords = (contour: cv.Mat): Point[] => {
   const pointVector = Array.from(contour.data32S);
   const coords = Array(4);
   for (let i = 0; i < 4; i++) coords[i] = pointVector.slice(i * 2, i * 2 + 2);
@@ -127,14 +127,12 @@ export const isEmpty = (src: cv.Mat) => {
  * cropping the cell's contents to remove any edges (which can be mistaken for characters).
  */
 export const cropCellBorders = (src: cv.Mat, binary: cv.Mat) => {
+  const cellCenter = [Math.round(binary.rows / 2), Math.round(binary.cols / 2)] as Point;
   const cellArea = binary.rows * binary.cols;
   const minArea = MIN_CHAR_AREA * cellArea;
   const maxArea = MAX_CHAR_AREA * cellArea;
-  const cellCenter = [Math.round(binary.rows / 2), Math.round(binary.cols / 2)];
   const contours = new cv.MatVector();
   const hierarchy = new cv.Mat();
-  // const red = new cv.Scalar(255, 0, 0);
-  // const dst = cv.Mat.zeros(src.cols, src.rows, cv.CV_8UC3);
 
   cv.findContours(binary, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
 
@@ -180,16 +178,6 @@ export const cropCellBorders = (src: cv.Mat, binary: cv.Mat) => {
 
       return src.roi(largestRect);
     }
-
-    //   // TODO: Add separate debugging mode
-    //   // @ts-ignore
-    //   const topLeft = new cv.Point(largestRect.x, largestRect.y);
-    //   // @ts-ignore
-    //   const bottomRight = new cv.Point(
-    //     largestRect.x + largestRect.width,
-    //     largestRect.y + largestRect.height
-    //   );
-    //   cv.rectangle(dst, topLeft, bottomRight, red, 2, cv.LINE_AA, 0);
   }
 
   contours.delete();
