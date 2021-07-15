@@ -16,7 +16,8 @@ export default function SudokuSolver() {
 
     if (frame && canvasRef.current) {
       const scanner = new SudokuScanner(frame);
-      const sudokuCanvas = scanner.extractSudokuImage(canvasRef.current);
+      scanner.extractSudokuImage(canvasRef.current);
+      scanner.destruct();
     }
 
     streamRef.current = requestAnimationFrame(() => processStream(input, output));

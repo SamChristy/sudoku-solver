@@ -10,15 +10,14 @@ import {
  * Locates and extracts Sudoku puzzles from a supplied image.
  */
 export default class SudokuScanner {
-  protected readonly ROWS: number;
-  protected readonly COLUMNS: number;
+  protected readonly preprocessParams = {
+    blurRadius: 11,
+    thresholdBlur: 5,
+    thresholdNorm: 2,
+  };
 
-  // Config values to adjust for image analysis:
-  protected readonly BLUR_RADIUS = 11;
-  protected readonly LINE_COLOUR = 255;
-  protected readonly THRESHOLD_BLUR_RADIUS = 5;
-  protected readonly THRESHOLD_NORM = 2;
-
+  protected readonly rows: number;
+  protected readonly columns: number;
   /** The original, unmodified copy we will keep; so that we can later return a clean image. */
   protected original: cv.Mat;
   /** The source image, which will be modified for image analysis.  */
@@ -29,7 +28,7 @@ export default class SudokuScanner {
     colour: cv.Mat;
     /** A black & white copy, to avoid having to redo the image processing in subsequent stages. */
     binary: cv.Mat;
-  };
+  } | null;
 
   /**
    * Loads the image to be scanned.
@@ -40,16 +39,17 @@ export default class SudokuScanner {
     this.original =
       source.constructor.name === 'ImageData' ? cv.matFromImageData(source) : cv.imread(source);
     this.source = this.original.clone();
-    this.ROWS = rows;
-    this.COLUMNS = columns;
+    this.rows = rows;
+    this.columns = columns;
   }
 
   /**
-   * Extracts and returns the largest Sudoku from the source image or null, if no Sudoku can be be
-   * found.
+   * Extracts the largest Sudoku from the source image, returning a boolean and, optionally, loading
+   * it into the
    */
-  public extractSudokuImage(canvas: HTMLCanvasElement): HTMLCanvasElement | null {
-    this.preprocessImage();
+  public extractSudokuImage(outputCanvas?: HTMLCanvasElement) {
+    // TODO: Check if image is too blurry.
+    this.preprocessImage({ blurRadius: 11, thresholdBlur: 5, thresholdNorm: 2 });
     const largestSquare = this.findLargestSquare();
 
     if (largestSquare !== null) {
@@ -62,28 +62,31 @@ export default class SudokuScanner {
       this.original.delete();
       this.source.delete();
 
-      const output = document.createElement('canvas');
-      cv.imshow(canvas, this.processed.colour);
-      return output;
+      outputCanvas && cv.imshow(outputCanvas, this.processed.colour);
+      return true;
     }
 
-    return null;
+    return false;
   }
 
   /**
-   * Extracts the digits from the processed Sudoku image (scan() must have been called first).
+   * Extracts digits from the source image.
    */
-  public extractDigits(): (HTMLCanvasElement | null)[] {
-    if (!this.processed) throw new Error('.scan() must have been called before .extractDigits().');
+  public extractDigits(): (HTMLCanvasElement | null)[] | null {
+    const grid = Array(this.rows).fill(Array(this.columns).fill(null));
 
-    const originalCells = split(this.processed.colour, this.ROWS, this.COLUMNS);
-    const binaryCells = split(this.processed.binary, this.ROWS, this.COLUMNS);
-    const grid = Array(this.ROWS);
+    // If we haven't scanned the image for Sudokus yet, we need to...
+    this.processed === undefined && this.extractSudokuImage();
+    // If we didn't find a Sudoku, then we won't find any digits...
+    if (!this.processed) return null;
 
-    for (let r = 0; r < this.ROWS; r++) {
-      const row = Array(this.COLUMNS);
+    const originalCells = split(this.processed.colour as cv.Mat, this.rows, this.columns);
+    const binaryCells = split(this.processed.binary as cv.Mat, this.rows, this.columns);
 
-      for (let c = 0; c < this.COLUMNS; c++) {
+    for (let r = 0; r < this.rows; r++) {
+      const row = Array(this.columns);
+
+      for (let c = 0; c < this.columns; c++) {
         const colourCell = originalCells[r][c];
         const binaryCell = binaryCells[r][c];
         row[c] = cropCellBorders(colourCell, binaryCell);
@@ -116,22 +119,26 @@ export default class SudokuScanner {
   /**
    * Applies image thresholding, to make the source image as close to black & white "line art" as
    * possible (i.e. with the goal of finding contiguous lines, with minimal noise).
+   *
+   * @param blurRadius
+   * @param thresholdBlur
+   * @param thresholdNorm
    */
-  protected preprocessImage() {
+  protected preprocessImage({ blurRadius, thresholdBlur, thresholdNorm }: ImageAnalysisParams) {
     // Grayscale, to help line-identification.
     cv.cvtColor(this.source, this.source, cv.COLOR_RGBA2GRAY, 0);
     // Blur, to smooth out noise.
-    const blurKernel = new cv.Size(this.BLUR_RADIUS, this.BLUR_RADIUS);
+    const blurKernel = new cv.Size(blurRadius, blurRadius);
     cv.GaussianBlur(this.source, this.source, blurKernel, 0, 0, cv.BORDER_DEFAULT);
     // Convert to black & white.
     cv.adaptiveThreshold(
       this.source,
       this.source,
-      this.LINE_COLOUR,
+      255, // black
       cv.ADAPTIVE_THRESH_MEAN_C,
       cv.THRESH_BINARY,
-      this.THRESHOLD_BLUR_RADIUS,
-      this.THRESHOLD_NORM
+      thresholdBlur,
+      thresholdNorm
     );
   }
 
@@ -170,3 +177,5 @@ export default class SudokuScanner {
     return largestSquare;
   }
 }
+
+type ImageAnalysisParams = { blurRadius: number; thresholdBlur: number; thresholdNorm: number };
