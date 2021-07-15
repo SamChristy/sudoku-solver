@@ -1,52 +1,55 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { createWorker } from 'tesseract.js';
 
+import { SudokuScanner } from '../services';
 import { getFrame, loadCameraStream, turnOffCamera } from '../util/camera';
-import { extractSudoku } from '../util/sudoku';
 
 export default function SudokuSolver() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const frameRef = useRef(0);
+  const streamRef = useRef(0);
+
+  const buffer = document.createElement('canvas');
 
   const processStream = useCallback((input: HTMLVideoElement, output: HTMLCanvasElement) => {
-    const frameData = cv.matFromImageData(getFrame(input));
-    const result = extractSudoku(frameData);
+    const frame = getFrame(input);
 
-    result && cv.imshow(output, result);
-
-    result?.delete();
-    frameData.delete();
-
-    if (!document.getElementsByTagName('tr').length)
-      frameRef.current = requestAnimationFrame(() => processStream(input, output));
-    else {
-      const worker = createWorker();
-
-      (async () => {
-        await worker.load();
-        await worker.loadLanguage('eng');
-        await worker.initialize('eng');
-        await worker.setParameters({
-          // @ts-ignore
-          tessedit_ocr_engine_mode: 2,
-          // @ts-ignore
-          tessedit_pageseg_mode: '10',
-          tessedit_char_whitelist: '0123456789',
-          user_defined_dpi: '300',
-        });
-        Array.from(document.querySelectorAll('img')).reduce(async (previousPromise, img, i) => {
-          await previousPromise;
-
-          return worker.recognize(img).then(({ data }) => {
-            console.warn(data);
-            const b = document.createElement('b');
-            b.textContent = data.text.slice(0, 1); // Tesseract sometimes returns multiple chars!
-            img.parentNode?.append(b, `(${Math.round(data.confidence)})`);
-          });
-        }, Promise.resolve());
-      })();
+    if (frame && canvasRef.current) {
+      const scanner = new SudokuScanner(frame);
+      const sudokuCanvas = scanner.extractSudokuImage(canvasRef.current);
     }
+
+    streamRef.current = requestAnimationFrame(() => processStream(input, output));
+
+    // if (!document.getElementsByTagName('tr').length)
+    //   frameRef.current = requestAnimationFrame(() => processStream(input, output));
+    // else {
+    //   const worker = createWorker();
+    //
+    //   (async () => {
+    //     await worker.load();
+    //     await worker.loadLanguage('eng');
+    //     await worker.initialize('eng');
+    //     await worker.setParameters({
+    //       // @ts-ignore
+    //       tessedit_ocr_engine_mode: 2,
+    //       // @ts-ignore
+    //       tessedit_pageseg_mode: '10',
+    //       tessedit_char_whitelist: '0123456789',
+    //       user_defined_dpi: '300',
+    //     });
+    //     Array.from(document.querySelectorAll('img')).reduce(async (previousPromise, img, i) => {
+    //       await previousPromise;
+    //
+    //       return worker.recognize(img).then(({ data }) => {
+    //         console.warn(data);
+    //         const b = document.createElement('b');
+    //         b.textContent = data.text.slice(0, 1); // Tesseract sometimes returns multiple chars!
+    //         img.parentNode?.append(b, `(${Math.round(data.confidence)})`);
+    //       });
+    //     }, Promise.resolve());
+    //   })();
+    // }
   }, []);
 
   useEffect(() => {
@@ -61,7 +64,7 @@ export default function SudokuSolver() {
     init();
 
     return () => {
-      cancelAnimationFrame(frameRef.current);
+      cancelAnimationFrame(streamRef.current);
       turnOffCamera(video);
     };
   }, [processStream]);
