@@ -55,9 +55,7 @@ export const isContourSquarish = (contour: cv.Mat, container: cv.Mat): boolean =
 };
 
 export const cropAndFlatten = (src: cv.Mat, rectangleContour: cv.Mat): cv.Mat => {
-  const [sourceWidth, sourceHeight] = [src.rows, src.cols];
-  const flattened = cv.Mat.zeros(sourceWidth, sourceHeight, cv.CV_8UC3);
-  const size = new cv.Size(sourceWidth, sourceHeight);
+  const [sourceWidth, sourceHeight] = [src.cols, src.rows];
 
   // Find the corners of the contour (this won't work if the grid is too close to 45°).
   const contourCoords = getContourPathCoords(rectangleContour);
@@ -65,6 +63,12 @@ export const cropAndFlatten = (src: cv.Mat, rectangleContour: cv.Mat): cv.Mat =>
   const topRight = closest([sourceWidth, 0], contourCoords);
   const bottomLeft = closest([0, sourceHeight], contourCoords);
   const bottomRight = closest([sourceWidth, sourceHeight], contourCoords);
+
+  // Choose the smallest width and side, for the cropped dimensions.
+  const newWidth = Math.min(topRight[0] - topLeft[0], bottomRight[0] - bottomLeft[0]);
+  const newHeight = Math.min(bottomLeft[1] - topLeft[1], bottomRight[1] - topRight[1]);
+  const flattened = cv.Mat.zeros(newWidth, newHeight, cv.CV_8UC3);
+  const size = new cv.Size(newWidth, newHeight);
 
   // Produce a transformation matrix and apply it to the warp
   // see: https://docs.opencv.org/3.4/dd/d52/tutorial_js_geometric_transformations.html
@@ -77,12 +81,12 @@ export const cropAndFlatten = (src: cv.Mat, rectangleContour: cv.Mat): cv.Mat =>
   const dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
     0,
     0,
-    sourceWidth,
+    newWidth,
     0,
-    sourceWidth,
-    sourceHeight,
+    newWidth,
+    newHeight,
     0,
-    sourceHeight,
+    newHeight,
   ]);
   const transformMatrix = cv.getPerspectiveTransform(srcTri, dstTri);
   cv.warpPerspective(src, flattened, transformMatrix, size, cv.INTER_LINEAR, cv.BORDER_CONSTANT);
