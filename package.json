@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "canvas": "^2.8.0",
-    "md5": "^2.3.0",
     "opencv-react": "0.0.5",
     "opencv4js": "^3.4.3",
     "react": "^17.0.2",
