@@ -23,20 +23,25 @@ it('reads image without crashing', async () => {
   scanner.destruct();
 });
 
-describe.each(readdirSync(testImageDir))('finds and extracts sudoku puzzle', filename =>
-  test(filename, async () => {
-    const inputCanvas = document.createElement('canvas');
-    const outputCanvas = document.createElement('canvas');
-    const ctx = inputCanvas.getContext('2d');
-    const image = await loadImage(`${testImageDir}/${filename}`);
+describe.each(readdirSync(testImageDir).filter(f => !f.startsWith('.')))(
+  'finds and extracts sudoku puzzle',
+  filename =>
+    test(filename, async () => {
+      const inputCanvas = document.createElement('canvas');
+      const outputCanvas = document.createElement('canvas');
+      const ctx = inputCanvas.getContext('2d');
+      const image = await loadImage(`${testImageDir}/${filename}`);
 
-    inputCanvas.width = image.width;
-    inputCanvas.height = image.height;
-    ctx?.drawImage((image as unknown) as ImageBitmap, 0, 0);
+      inputCanvas.width = image.width;
+      inputCanvas.height = image.height;
+      ctx?.drawImage((image as unknown) as ImageBitmap, 0, 0);
 
-    const scanner = new SudokuScanner(inputCanvas);
-    scanner.extractSudokuImage(outputCanvas);
-    scanner.destruct();
-    saveCanvas(outputCanvas, `${testImageDir}/../output/${path.parse(filename).name}.png`);
-  })
+      const scanner = new SudokuScanner(inputCanvas);
+      const found = scanner.extractSudokuImage(outputCanvas);
+      scanner.destruct();
+      found &&
+        saveCanvas(outputCanvas, `${testImageDir}/../output/${path.parse(filename).name}.png`);
+
+      expect(found).toBe(true);
+    })
 );
