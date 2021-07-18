@@ -8,6 +8,7 @@ const testImageDir = `${__dirname}/samples`;
 it('loads without crashing', () => {
   const canvas = document.createElement('canvas');
   const scanner = new SudokuScanner(canvas);
+  scanner.destruct();
 });
 
 it('loads image', async () => {
@@ -17,6 +18,7 @@ it('loads image', async () => {
   ctx?.drawImage((image as unknown) as ImageBitmap, 0, 0);
 
   const scanner = new SudokuScanner(canvas);
+  scanner.destruct();
 });
 
 it('scans image not containing sudoku', async () => {
@@ -27,6 +29,7 @@ it('scans image not containing sudoku', async () => {
 
   const scanner = new SudokuScanner(canvas);
   const found = scanner.extractSudokuImage();
+  scanner.destruct();
 
   expect(found).toBe(false);
 });
@@ -39,6 +42,7 @@ it('finds sudoku in photo', async () => {
 
   const scanner = new SudokuScanner(canvas);
   const found = scanner.extractSudokuImage();
+  scanner.destruct();
 
   expect(found).toBe(true);
 });
@@ -51,6 +55,7 @@ it('finds sudoku in graphic', async () => {
 
   const scanner = new SudokuScanner(canvas);
   const found = scanner.extractSudokuImage();
+  scanner.destruct();
 
   expect(found).toBe(true);
 });
@@ -68,6 +73,7 @@ it('effectively crops and flattens sudoku photo', async () => {
 
   const scanner = new SudokuScanner(inputCanvas);
   scanner.extractSudokuImage(outputCanvas);
+  scanner.destruct();
 
   expect(md5(outputCanvas.toDataURL())).toBe(md5Snapshot);
 });
