@@ -26,6 +26,7 @@ export default function SudokuSolver() {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const init = async () => {
+      // TODO: Turn off camera on tab change & test stop/starting robustness
       await loadCameraStream(video, { width: 500, height: 500 });
       processStream(video, canvas);
     };

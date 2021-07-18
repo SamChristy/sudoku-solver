@@ -192,5 +192,3 @@ export const cropCellBorders = (src: cv.Mat, binary: cv.Mat) => {
 
   return null;
 };
-
-// TODO: Create isBlurry() function https://github.com/justadudewhohacks/opencv4nodejs/issues/448

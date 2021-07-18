@@ -8,6 +8,8 @@ import SudokuSolver from './components';
 export default function App() {
   const [loading, setLoading] = useState(true);
 
+  // TODO: Add Error handling & browser feature checks
+
   return (
     <>
       <button
