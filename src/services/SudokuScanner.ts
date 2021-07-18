@@ -10,7 +10,7 @@ import {
  * Locates and extracts Sudoku puzzles from a supplied image.
  */
 export default class SudokuScanner {
-  protected readonly preprocessParams = {
+  protected readonly preprocessConfig = {
     blurRadius: 11,
     thresholdBlur: 5,
     thresholdNorm: 2,
@@ -49,7 +49,7 @@ export default class SudokuScanner {
    */
   public extractSudokuImage(outputCanvas?: HTMLCanvasElement) {
     // TODO: Check if image is too blurry.
-    this.preprocessImage({ blurRadius: 11, thresholdBlur: 5, thresholdNorm: 2 });
+    this.preprocessImage();
     const largestSquare = this.findLargestSquare();
 
     if (largestSquare !== null) {
@@ -119,12 +119,10 @@ export default class SudokuScanner {
   /**
    * Applies image thresholding, to make the source image as close to black & white "line art" as
    * possible (i.e. with the goal of finding contiguous lines, with minimal noise).
-   *
-   * @param blurRadius
-   * @param thresholdBlur
-   * @param thresholdNorm
    */
-  protected preprocessImage({ blurRadius, thresholdBlur, thresholdNorm }: ImageAnalysisParams) {
+  protected preprocessImage() {
+    const { blurRadius, thresholdBlur, thresholdNorm } = this.preprocessConfig;
+
     // Grayscale, to help line-identification.
     cv.cvtColor(this.source, this.source, cv.COLOR_RGBA2GRAY, 0);
     // Blur, to smooth out noise.
@@ -177,5 +175,3 @@ export default class SudokuScanner {
     return largestSquare;
   }
 }
-
-type ImageAnalysisParams = { blurRadius: number; thresholdBlur: number; thresholdNorm: number };
