@@ -1,13 +1,12 @@
 import { loadImage } from 'canvas';
-import { readdirSync } from 'fs';
-import path from 'path';
 
+import { canvasToBuffer } from '../../util/canvas';
 import { SudokuScanner } from '../index';
 
+const { listNonHiddenFiles } = global;
 const testImageDir = `${__dirname}/samples`;
-const { saveCanvas } = global;
 
-it('loads libraries without crashing', () => {
+it('loads dependencies without crashing', () => {
   const canvas = document.createElement('canvas');
   const scanner = new SudokuScanner(canvas);
   scanner.destruct();
@@ -23,25 +22,21 @@ it('reads image without crashing', async () => {
   scanner.destruct();
 });
 
-describe.each(readdirSync(testImageDir).filter(f => !f.startsWith('.')))(
-  'finds and extracts sudoku puzzle',
-  filename =>
-    test(filename, async () => {
-      const inputCanvas = document.createElement('canvas');
-      const outputCanvas = document.createElement('canvas');
-      const ctx = inputCanvas.getContext('2d');
-      const image = await loadImage(`${testImageDir}/${filename}`);
+describe.each(listNonHiddenFiles(testImageDir))('finds and extracts sudoku puzzle', filename =>
+  test(filename, async () => {
+    const inputCanvas = document.createElement('canvas');
+    const outputCanvas = document.createElement('canvas');
+    const ctx = inputCanvas.getContext('2d');
+    const image = await loadImage(`${testImageDir}/${filename}`);
 
-      inputCanvas.width = image.width;
-      inputCanvas.height = image.height;
-      ctx?.drawImage((image as unknown) as ImageBitmap, 0, 0);
+    inputCanvas.width = image.width;
+    inputCanvas.height = image.height;
+    ctx?.drawImage((image as unknown) as ImageBitmap, 0, 0);
 
-      const scanner = new SudokuScanner(inputCanvas);
-      const found = scanner.extractSudokuImage(outputCanvas);
-      scanner.destruct();
-      found &&
-        saveCanvas(outputCanvas, `${testImageDir}/../output/${path.parse(filename).name}.png`);
+    const scanner = new SudokuScanner(inputCanvas);
+    scanner.extractSudokuImage(outputCanvas);
+    scanner.destruct();
 
-      expect(found).toBe(true);
-    })
+    expect(canvasToBuffer(outputCanvas)).toMatchImageSnapshot();
+  })
 );

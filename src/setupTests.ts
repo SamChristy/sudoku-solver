@@ -5,24 +5,8 @@
 import '@testing-library/jest-dom';
 
 import { ImageData } from 'canvas';
-import { writeFileSync } from 'fs';
+import { toMatchImageSnapshot } from 'jest-image-snapshot';
 
-global.cv = require('opencv4js');
-
-declare global {
-  namespace NodeJS {
-    interface Global {
-      /** Test helper, for visual debugging! 🔍 */
-      saveCanvas(canvas: HTMLCanvasElement, filename: string): void;
-    }
-  }
-}
-export default global;
-
+expect.extend({ toMatchImageSnapshot });
 global.ImageData = ImageData;
-global.saveCanvas = (canvas: HTMLCanvasElement, filename: string) => {
-  const dataURL = canvas.toDataURL();
-  const base64String = dataURL.replace(/^data:image\/\w+;base64,/, '');
-
-  writeFileSync(filename, Buffer.from(base64String, 'base64'));
-};
+global.cv = require('opencv4js');
