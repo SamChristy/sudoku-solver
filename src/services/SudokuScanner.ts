@@ -66,6 +66,7 @@ export default class SudokuScanner {
       return true;
     }
 
+    this.processed = null;
     return false;
   }
 
@@ -73,30 +74,28 @@ export default class SudokuScanner {
    * Extracts digits from the source image.
    */
   public extractDigits(): (HTMLCanvasElement | null)[] | null {
-    const grid = Array(this.rows).fill(Array(this.columns).fill(null));
+    // If we didn't find a Sudoku, then we won't find any digits...
+    if (this.processed === null) return null;
 
     // If we haven't scanned the image for Sudokus yet, we need to...
-    this.processed === undefined && this.extractSudokuImage();
-    // If we didn't find a Sudoku, then we won't find any digits...
-    if (!this.processed) return null;
+    if (this.processed === undefined) {
+      this.extractSudokuImage();
+      return this.extractDigits();
+    }
 
+    const grid = Array(this.rows).fill(Array(this.columns).fill(null));
     const originalCells = split(this.processed.colour as cv.Mat, this.rows, this.columns);
     const binaryCells = split(this.processed.binary as cv.Mat, this.rows, this.columns);
 
-    for (let r = 0; r < this.rows; r++) {
-      const row = Array(this.columns);
-
+    for (let r = 0; r < this.rows; r++)
       for (let c = 0; c < this.columns; c++) {
         const colourCell = originalCells[r][c];
         const binaryCell = binaryCells[r][c];
-        row[c] = cropCellBorders(colourCell, binaryCell);
+        grid[r][c] = cropCellBorders(colourCell, binaryCell);
 
         colourCell.delete();
         binaryCell.delete();
       }
-
-      grid[r] = row;
-    }
 
     return grid;
   }
