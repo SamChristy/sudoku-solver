@@ -1,14 +1,15 @@
 import { loadImage } from 'canvas';
+import path from 'path';
 
 import { canvasToBuffer } from '../../util/canvas';
 import { SudokuScanner } from '../index';
 
 const { listNonHiddenFiles } = global;
 const testImageDir = `${__dirname}/samples`;
+const testSnapshotDir = `${testImageDir}/../__image_snapshots__`;
 
 it('loads dependencies without crashing', () => {
-  const canvas = document.createElement('canvas');
-  const scanner = new SudokuScanner(canvas);
+  const scanner = new SudokuScanner(document.createElement('canvas'));
   scanner.destruct();
 });
 
@@ -38,5 +39,32 @@ describe.each(listNonHiddenFiles(testImageDir))('finds and extracts sudoku puzzl
     scanner.destruct();
 
     expect(canvasToBuffer(outputCanvas)).toMatchImageSnapshot();
+  })
+);
+
+// Most of the time is spent comparing the images, so it's only about 5% slower to reprocess the
+// entire image set (giving the benefit of more accurate failures).
+describe.each(listNonHiddenFiles(testImageDir))('extracts numbers', filename =>
+  test(filename, async () => {
+    const inputCanvas = document.createElement('canvas');
+    const ctx = inputCanvas.getContext('2d');
+    const image = await loadImage(`${testImageDir}/${filename}`);
+
+    inputCanvas.width = image.width;
+    inputCanvas.height = image.height;
+    ctx?.drawImage((image as unknown) as ImageBitmap, 0, 0);
+
+    const scanner = new SudokuScanner(inputCanvas);
+    scanner
+      .extractDigits()
+      ?.flat()
+      .forEach(
+        digitCanvas =>
+          digitCanvas &&
+          expect(canvasToBuffer(digitCanvas)).toMatchImageSnapshot({
+            customSnapshotsDir: `${testSnapshotDir}/${path.parse(filename).name}-digits`,
+          })
+      );
+    scanner.destruct();
   })
 );

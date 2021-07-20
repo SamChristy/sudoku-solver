@@ -130,7 +130,7 @@ export const isEmpty = (src: cv.Mat) => {
  * Tesseract is notoriously bad at extracting text from table cells; so we need help it out, by
  * cropping the cell's contents to remove any edges (which can be mistaken for characters).
  */
-export const cropCellBorders = (src: cv.Mat, binary: cv.Mat) => {
+export const cropCellBorders = (src: cv.Mat, binary: cv.Mat): cv.Mat | null => {
   const cellCenter = [Math.round(binary.rows / 2), Math.round(binary.cols / 2)] as Point;
   const cellArea = binary.rows * binary.cols;
   const minArea = MIN_CHAR_AREA * cellArea;
@@ -139,6 +139,7 @@ export const cropCellBorders = (src: cv.Mat, binary: cv.Mat) => {
   const hierarchy = new cv.Mat();
 
   cv.findContours(binary, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
+  hierarchy.delete();
 
   let largestArea = 0;
   let largestRect = null;
@@ -183,12 +184,10 @@ export const cropCellBorders = (src: cv.Mat, binary: cv.Mat) => {
       largestRect.width = Math.min(largestRect.width + 2 * padding, src.cols - largestRect.x);
       largestRect.height = Math.min(largestRect.height + 2 * padding, src.rows - largestRect.y);
 
+      contours.delete();
       return src.roi(largestRect);
     }
   }
-
   contours.delete();
-  hierarchy.delete();
-
   return null;
 };

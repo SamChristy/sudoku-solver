@@ -73,7 +73,7 @@ export default class SudokuScanner {
   /**
    * Extracts digits from the source image.
    */
-  public extractDigits(): (HTMLCanvasElement | null)[] | null {
+  public extractDigits(): (HTMLCanvasElement | null)[][] | null {
     // If we didn't find a Sudoku, then we won't find any digits...
     if (this.processed === null) return null;
 
@@ -83,19 +83,32 @@ export default class SudokuScanner {
       return this.extractDigits();
     }
 
-    const grid = Array(this.rows).fill(Array(this.columns).fill(null));
     const originalCells = split(this.processed.colour as cv.Mat, this.rows, this.columns);
     const binaryCells = split(this.processed.binary as cv.Mat, this.rows, this.columns);
+    const grid: (HTMLCanvasElement | null)[][] = [];
 
-    for (let r = 0; r < this.rows; r++)
+    for (let r = 0; r < this.rows; r++) {
+      const row = [];
+
       for (let c = 0; c < this.columns; c++) {
         const colourCell = originalCells[r][c];
         const binaryCell = binaryCells[r][c];
-        grid[r][c] = cropCellBorders(colourCell, binaryCell);
+        const digitMat = cropCellBorders(colourCell, binaryCell);
+
+        if (digitMat) {
+          const canvas = document.createElement('canvas');
+          row.push(canvas);
+          cv.imshow(canvas, digitMat);
+
+          digitMat.delete();
+        } else row.push(null);
 
         colourCell.delete();
         binaryCell.delete();
       }
+
+      grid.push(row);
+    }
 
     return grid;
   }
