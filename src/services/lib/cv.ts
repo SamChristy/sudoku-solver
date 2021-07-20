@@ -1,8 +1,8 @@
-import { closest, isPointInsideRect, measureSides, Point } from './geometry';
+import { closest, isPointInsideRect, measureSides, Point } from '../../util/geometry';
 
 const BOX_DETECTION_THRESHOLD = 0.01;
 const SQUARE_SHAPE_THRESHOLD = 0.7;
-const MIN_SQUARE_AREA = 0.1;
+const MIN_SQUARE_AREA = 0.215; // TODO: Move this - and other bits - into SudokuSolver class.
 const MAX_SQUARE_SIZE = 0.99;
 const MIN_CHAR_AREA = 0.08;
 const MAX_CHAR_AREA = 0.8;
@@ -32,12 +32,13 @@ export const simplifyContour = (contour: cv.Mat): cv.Mat => {
 };
 
 export const isContourSquarish = (contour: cv.Mat, container: cv.Mat): boolean => {
+  // Take the smaller of both sides, to allow for wide aspect ratio sources.
+  const minArea = Math.min(container.rows, container.cols) ** 2 * MIN_SQUARE_AREA;
   const sizeLimit = Math.max(container.rows, container.cols) * MAX_SQUARE_SIZE;
-  const minArea = container.rows * container.cols * MIN_SQUARE_AREA;
   const sides = contour.size().height;
-  const area = cv.contourArea(contour);
 
-  if (sides === 4 && area >= minArea) {
+  // TODO: Tweak min-area threshold so that the 'design-3.jpg' test passes.
+  if (sides === 4 && cv.contourArea(contour) >= minArea) {
     const coords = getContourPathCoords(contour);
 
     // Check that all sides are within ~70% of the longest side.
@@ -129,6 +130,8 @@ export const isEmpty = (src: cv.Mat) => {
 /**
  * Tesseract is notoriously bad at extracting text from table cells; so we need help it out, by
  * cropping the cell's contents to remove any edges (which can be mistaken for characters).
+ *
+ * @todo Move to SudokuScanner?
  */
 export const cropCellBorders = (src: cv.Mat, binary: cv.Mat): cv.Mat | null => {
   const cellCenter = [Math.round(binary.rows / 2), Math.round(binary.cols / 2)] as Point;

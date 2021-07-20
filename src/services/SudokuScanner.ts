@@ -4,7 +4,7 @@ import {
   isContourSquarish,
   simplifyContour,
   split,
-} from '../util/cv';
+} from './lib/cv';
 
 /**
  * Locates and extracts Sudoku puzzles from a supplied image.
@@ -48,7 +48,7 @@ export default class SudokuScanner {
    * it into the
    */
   public extractSudokuImage(outputCanvas?: HTMLCanvasElement) {
-    // TODO: Check if image is too blurry.
+    // TODO: Check if image is too blurry (see: https://github.com/justadudewhohacks/opencv4nodejs/issues/448)
     this.preprocessImage();
     const largestSquare = this.findLargestSquare();
 
@@ -170,6 +170,7 @@ export default class SudokuScanner {
       const simplified = simplifyContour(contour);
 
       // TODO: Add additional constraints (e.g.parallel Hough lines?) to reduce false positives! 🧐
+      //       - Subgrids can be avoided by making sure line-count correlates to this.rows/columns?
       if (isContourSquarish(simplified, this.source)) {
         const area = cv.contourArea(simplified);
         if (area > largestArea) {
