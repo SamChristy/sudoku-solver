@@ -1,3 +1,4 @@
+import SudokuScannerInterface, { SudokuScannerConfig } from '../types/interfaces/SudokuScanner';
 import {
   cropAndFlatten,
   cropCellBorders,
@@ -9,15 +10,20 @@ import {
 /**
  * Locates and extracts Sudoku puzzles from a supplied image.
  */
-export default class SudokuScanner {
-  protected readonly preprocessConfig = {
-    blurRadius: 11,
-    thresholdBlur: 5,
-    thresholdNorm: 2,
+export default class SudokuScanner implements SudokuScannerInterface {
+  /** @inheritDoc */
+  protected readonly config: SudokuScannerConfig = {
+    rows: 9,
+    columns: 9,
+    preprocess: {
+      blurRadius: 11,
+      thresholdBlur: 5,
+      thresholdNorm: 2,
+    },
+    minSize: 0.25,
+    maxSize: 0.99,
   };
 
-  protected readonly rows: number;
-  protected readonly columns: number;
   /** The original, unmodified copy we will keep; so that we can later return a clean image. */
   protected original: cv.Mat;
   /** The source image, which will be modified for image analysis.  */
@@ -31,23 +37,19 @@ export default class SudokuScanner {
   } | null;
 
   /**
-   * Loads the image to be scanned.
+   * Loads the image to be scanned and applies custom config values, if supplied.
    */
-  constructor(source: HTMLCanvasElement | ImageData, rows = 9, columns = 9) {
-    if (!cv) throw new Error('opencv.js must be loaded!');
+  constructor(source: HTMLCanvasElement | ImageData, config?: Partial<SudokuScannerConfig>) {
+    if (!cv) throw new Error('OpenCV must be loaded!');
 
     this.original =
       source.constructor.name === 'ImageData' ? cv.matFromImageData(source) : cv.imread(source);
     this.source = this.original.clone();
-    this.rows = rows;
-    this.columns = columns;
+    this.config = { ...this.config, ...config };
   }
 
-  /**
-   * Extracts the largest Sudoku from the source image, returning a boolean and, optionally, loading
-   * it into the
-   */
-  public extractSudokuImage(outputCanvas?: HTMLCanvasElement) {
+  /** @inheritDoc */
+  public extractSudokuImage(outputCanvas?: HTMLCanvasElement): boolean {
     // TODO: Check if image is too blurry (see: https://github.com/justadudewhohacks/opencv4nodejs/issues/448)
     this.preprocessImage();
     const largestSquare = this.findLargestSquare();
@@ -70,9 +72,7 @@ export default class SudokuScanner {
     return false;
   }
 
-  /**
-   * Extracts digits from the source image.
-   */
+  /** @inheritDoc */
   public extractDigits(): (HTMLCanvasElement | null)[][] | null {
     // If we didn't find a Sudoku, then we won't find any digits...
     if (this.processed === null) return null;
@@ -83,14 +83,14 @@ export default class SudokuScanner {
       return this.extractDigits();
     }
 
-    const originalCells = split(this.processed.colour as cv.Mat, this.rows, this.columns);
-    const binaryCells = split(this.processed.binary as cv.Mat, this.rows, this.columns);
+    const originalCells = split(this.processed.colour, this.config.rows, this.config.columns);
+    const binaryCells = split(this.processed.binary, this.config.rows, this.config.columns);
     const grid: (HTMLCanvasElement | null)[][] = [];
 
-    for (let r = 0; r < this.rows; r++) {
+    for (let r = 0; r < this.config.rows; r++) {
       const row = [];
 
-      for (let c = 0; c < this.columns; c++) {
+      for (let c = 0; c < this.config.columns; c++) {
         const colourCell = originalCells[r][c];
         const binaryCell = binaryCells[r][c];
         const digitMat = cropCellBorders(colourCell, binaryCell);
@@ -113,10 +113,8 @@ export default class SudokuScanner {
     return grid;
   }
 
-  /**
-   * Really important to call this when finished, as OpenCV will leak memory otherwise!
-   */
-  public destruct() {
+  /** @inheritDoc */
+  public destruct(): void {
     // If the image has been processed, then the this.original and this.source matrices have already
     // been deleted.
     if (this.processed) {
@@ -132,8 +130,8 @@ export default class SudokuScanner {
    * Applies image thresholding, to make the source image as close to black & white "line art" as
    * possible (i.e. with the goal of finding contiguous lines, with minimal noise).
    */
-  protected preprocessImage() {
-    const { blurRadius, thresholdBlur, thresholdNorm } = this.preprocessConfig;
+  protected preprocessImage(): void {
+    const { blurRadius, thresholdBlur, thresholdNorm } = this.config.preprocess;
 
     // Grayscale, to help line-identification.
     cv.cvtColor(this.source, this.source, cv.COLOR_RGBA2GRAY, 0);
