@@ -8,9 +8,26 @@ const { listNonHiddenFiles } = global;
 const testImageDir = `${__dirname}/samples`;
 const testSnapshotDir = `${testImageDir}/../__image_snapshots__`;
 
-it('loads dependencies without crashing', () => {
+it('loads without crashing', () => {
   const scanner = new SudokuScanner(document.createElement('canvas'));
   scanner.destruct();
+});
+
+it("throws error, if OpenCV isn't loaded", () => {
+  const instantiateSudokuScannerWithoutOpenCV = () => {
+    const OpenCV = global.cv;
+    // @ts-ignore
+    global.cv = undefined;
+
+    try {
+      const scanner = new SudokuScanner(document.createElement('canvas'));
+    } catch (e) {
+      global.cv = OpenCV;
+      throw e;
+    }
+  };
+
+  expect(instantiateSudokuScannerWithoutOpenCV).toThrowError();
 });
 
 it('reads image without crashing', async () => {
