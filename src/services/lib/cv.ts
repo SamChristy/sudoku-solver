@@ -1,9 +1,8 @@
 import { closest, isPointInsideRect, measureSides, Point } from '../../util/geometry';
 
+/** {@link https://docs.opencv.org/3.4/dc/dcf/tutorial_js_contour_features.html} */
 const BOX_DETECTION_THRESHOLD = 0.01;
 const SQUARE_SHAPE_THRESHOLD = 0.7;
-const MIN_SQUARE_AREA = 0.215; // TODO: Move this - and other bits - into SudokuSolver class.
-const MAX_SQUARE_SIZE = 0.99;
 const MIN_CHAR_AREA = 0.08;
 const MAX_CHAR_AREA = 0.8;
 const MIN_CHAR_ASPECT_RATIO = 0.2;
@@ -23,6 +22,9 @@ export const getContourPathCoords = (contour: cv.Mat): Point[] => {
   return coords;
 };
 
+/**
+ * Simplifies the shape, reducing its number of sides.
+ */
 export const simplifyContour = (contour: cv.Mat): cv.Mat => {
   const simplified = new cv.Mat();
   const epsilon = BOX_DETECTION_THRESHOLD * cv.arcLength(contour, true);
@@ -31,14 +33,32 @@ export const simplifyContour = (contour: cv.Mat): cv.Mat => {
   return simplified;
 };
 
-export const isContourSquarish = (contour: cv.Mat, container: cv.Mat): boolean => {
+/**
+ * Returns true if the contour resembles a square (allowing for varied perspective angles and
+ * rotation).
+ *
+ * @param contour
+ * @param container The contour's container, to be used as a size reference.
+ * @param minSize   The minimum size of the square (relative to container).
+ * @param maxSize   The maximum size of the square (relative to container).
+ */
+export const isContourSquarish = (
+  contour: cv.Mat,
+  container?: cv.Mat,
+  minSize = 0,
+  maxSize = 1
+): boolean => {
+  // If we don't have 4 sides, then it's definitely not a square!
+  if (contour.size().height !== 4) return false;
+  // If there are no size constraints to apply...
+  if (!container) return true;
+
   // Take the smaller of both sides, to allow for wide aspect ratio sources.
-  const minArea = Math.min(container.rows, container.cols) ** 2 * MIN_SQUARE_AREA;
-  const sizeLimit = Math.max(container.rows, container.cols) * MAX_SQUARE_SIZE;
-  const sides = contour.size().height;
+  const minArea = Math.min(container.rows, container.cols) ** 2 * minSize;
+  const sizeLimit = Math.max(container.rows, container.cols) * maxSize;
 
   // TODO: Tweak min-area threshold so that the 'design-3.jpg' test passes.
-  if (sides === 4 && cv.contourArea(contour) >= minArea) {
+  if (cv.contourArea(contour) >= minArea) {
     const coords = getContourPathCoords(contour);
 
     // Check that all sides are within ~70% of the longest side.

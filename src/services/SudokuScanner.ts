@@ -167,9 +167,8 @@ export default class SudokuScanner implements SudokuScannerInterface {
       const contour = contours.get(i);
       const simplified = simplifyContour(contour);
 
-      // TODO: Add additional constraints (e.g.parallel Hough lines?) to reduce false positives! 🧐
-      //       - Subgrids can be avoided by making sure line-count correlates to this.rows/columns?
-      if (isContourSquarish(simplified, this.source)) {
+      // TODO: Add additional constraints, e.g.parallel Hough lines, to reduce false positives?
+      if (isContourSquarish(simplified, this.source, this.config.minSize, this.config.maxSize)) {
         const area = cv.contourArea(simplified);
         if (area > largestArea) {
           largestArea = area;
