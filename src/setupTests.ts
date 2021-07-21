@@ -6,7 +6,6 @@ import '@testing-library/jest-dom';
 
 import { ImageData } from 'canvas';
 import { PathLike, readdirSync } from 'fs';
-import { toMatchImageSnapshot } from 'jest-image-snapshot';
 
 declare global {
   namespace NodeJS {
@@ -17,7 +16,6 @@ declare global {
 }
 export default global;
 
-expect.extend({ toMatchImageSnapshot });
 global.ImageData = ImageData;
 global.listNonHiddenFiles = (dir: PathLike) =>
   readdirSync(dir).filter(filename => !filename.startsWith('.'));

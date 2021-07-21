@@ -1,8 +1,11 @@
 import { loadImage } from 'canvas';
+import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import path from 'path';
 
 import { canvasToBuffer } from '../../../util/canvas';
 import SudokuScanner from '../SudokuScanner';
+
+expect.extend({ toMatchImageSnapshot });
 
 const { listNonHiddenFiles } = global;
 const testImageDir = path.join(__dirname, 'samples');

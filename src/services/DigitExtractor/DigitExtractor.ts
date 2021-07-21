@@ -27,9 +27,8 @@ export default class DigitExtractor implements DigitExtractorInterface {
 
   /** @inheritDoc */
   public async extractSingle(imageSource: ImageLike): Promise<string> {
-    const { data } = await this.worker.recognize(imageSource);
     // TODO: Check other returned symbols and use Sudoku constraints to inform selection.
-    console.log(data);
+    const { data } = await this.worker.recognize(imageSource);
 
     return data.text.slice(0, 1); // Tesseract sometimes returns multiple chars!
   }
