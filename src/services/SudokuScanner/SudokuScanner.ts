@@ -1,11 +1,11 @@
-import SudokuScannerInterface, { SudokuScannerConfig } from '../types/interfaces/SudokuScanner';
+import SudokuScannerInterface, { SudokuScannerConfig } from '../../types/interfaces/SudokuScanner';
 import {
   cropAndFlatten,
   cropCellBorders,
   isContourSquarish,
   simplifyContour,
   split,
-} from './lib/cv';
+} from '../lib/cv';
 
 /**
  * Locates and extracts Sudoku puzzles from a supplied image.

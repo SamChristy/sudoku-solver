@@ -1,6 +1,6 @@
 import { createWorker, ImageLike, PSM, Worker, WorkerParams } from 'tesseract.js';
 
-import DigitExtractorInterface from '../types/interfaces/DigitExtractor';
+import DigitExtractorInterface from '../../types/interfaces/DigitExtractor';
 
 export default class DigitExtractor implements DigitExtractorInterface {
   protected readonly worker: Worker;

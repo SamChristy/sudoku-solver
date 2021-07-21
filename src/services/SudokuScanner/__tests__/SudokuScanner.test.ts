@@ -1,8 +1,8 @@
 import { loadImage } from 'canvas';
 import path from 'path';
 
-import { canvasToBuffer } from '../../util/canvas';
-import { SudokuScanner } from '../index';
+import { canvasToBuffer } from '../../../util/canvas';
+import SudokuScanner from '../SudokuScanner';
 
 const { listNonHiddenFiles } = global;
 const testImageDir = `${__dirname}/samples`;

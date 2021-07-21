@@ -1,3 +1,3 @@
-export { default as SudokuSolver } from './SudokuSolver';
-export { default as SudokuScanner } from './SudokuScanner';
-export { default as DigitExtractor } from './DigitExtractor';
+export { default as SudokuSolver } from './SudokuSolver/SudokuSolver';
+export { default as SudokuScanner } from './SudokuScanner/SudokuScanner';
+export { default as DigitExtractor } from './DigitExtractor/DigitExtractor';
