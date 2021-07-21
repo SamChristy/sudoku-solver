@@ -5,8 +5,8 @@ import { canvasToBuffer } from '../../../util/canvas';
 import SudokuScanner from '../SudokuScanner';
 
 const { listNonHiddenFiles } = global;
-const testImageDir = `${__dirname}/samples`;
-const testSnapshotDir = `${testImageDir}/../__image_snapshots__`;
+const testImageDir = path.join(__dirname, 'samples');
+const testSnapshotDir = path.join(testImageDir, '..', '__image_snapshots__');
 
 it('loads without crashing', () => {
   const scanner = new SudokuScanner(document.createElement('canvas'));
