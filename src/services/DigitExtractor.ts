@@ -1,33 +1,41 @@
-// if (!document.getElementsByTagName('tr').length)
-//   frameRef.current = requestAnimationFrame(() => processStream(input, output));
-// else {
-//   const worker = createWorker();
-//
-//   (async () => {
-//     await worker.load();
-//     await worker.loadLanguage('eng');
-//     await worker.initialize('eng');
-//     await worker.setParameters({
-//       // @ts-ignore
-//       tessedit_ocr_engine_mode: 2,
-//       // @ts-ignore
-//       tessedit_pageseg_mode: '10',
-//       tessedit_char_whitelist: '0123456789',
-//       user_defined_dpi: '300',
-//     });
-//     Array.from(document.querySelectorAll('img')).reduce(async (previousPromise, img, i) => {
-//       await previousPromise;
-//
-//       return worker.recognize(img).then(({ data }) => {
-//         console.warn(data);
-//         const b = document.createElement('b');
-//         b.textContent = data.text.slice(0, 1); // Tesseract sometimes returns multiple chars!
-//         img.parentNode?.append(b, `(${Math.round(data.confidence)})`);
-//       });
-//     }, Promise.resolve());
-//   })();
-// }
+import { createWorker, ImageLike, PSM, Worker, WorkerParams } from 'tesseract.js';
 
-export default class DigitExtractor {
-  // constructor() {}
+import DigitExtractorInterface from '../types/interfaces/DigitExtractor';
+
+export default class DigitExtractor implements DigitExtractorInterface {
+  protected readonly worker: Worker;
+  protected readonly language = 'eng';
+  protected readonly tesseractConfig: Partial<WorkerParams> = {
+    tessedit_ocr_engine_mode: 2,
+    tessedit_pageseg_mode: '10' as PSM,
+    tessedit_char_whitelist: '0123456789',
+    user_defined_dpi: '300',
+  };
+
+  constructor(config?: Partial<WorkerParams>) {
+    this.worker = createWorker();
+    this.tesseractConfig = { ...this.tesseractConfig, ...config };
+  }
+
+  /** @inheritDoc */
+  public async load() {
+    await this.worker.load();
+    await this.worker.loadLanguage(this.language);
+    await this.worker.initialize(this.language);
+    await this.worker.setParameters(this.tesseractConfig);
+  }
+
+  /** @inheritDoc */
+  public async extractSingle(imageSource: ImageLike): Promise<string> {
+    const { data } = await this.worker.recognize(imageSource);
+    // TODO: Check other returned symbols and use Sudoku constraints to inform selection.
+    console.log(data);
+
+    return data.text.slice(0, 1); // Tesseract sometimes returns multiple chars!
+  }
+
+  /** @inheritDoc */
+  public async destruct() {
+    this.worker.terminate();
+  }
 }
