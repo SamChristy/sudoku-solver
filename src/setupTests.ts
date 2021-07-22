@@ -6,6 +6,7 @@ import '@testing-library/jest-dom';
 
 import { ImageData } from 'canvas';
 import { PathLike, readdirSync } from 'fs';
+import failOnConsole from 'jest-fail-on-console';
 
 declare global {
   namespace NodeJS {
@@ -20,3 +21,5 @@ global.ImageData = ImageData;
 global.listNonHiddenFiles = (dir: PathLike) =>
   readdirSync(dir).filter(filename => !filename.startsWith('.'));
 global.cv = require('opencv4js');
+
+failOnConsole();
