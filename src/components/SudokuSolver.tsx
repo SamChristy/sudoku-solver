@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { createWorker } from 'tesseract.js';
 
 import { SudokuScanner } from '../services';
+import DigitExtractor from '../services/DigitExtractor/DigitExtractor';
 import { getFrame, loadCameraStream, turnOffCamera } from '../util/camera';
 
 export default function SudokuSolver() {
@@ -32,6 +32,14 @@ export default function SudokuSolver() {
     };
 
     init();
+    (async () => {
+      const extractor = new DigitExtractor();
+      await extractor.load();
+      const digit = await extractor.extractSingle(`7.png`);
+
+      extractor.destruct();
+      console.log('extracted', digit);
+    })();
 
     return () => {
       cancelAnimationFrame(streamRef.current);
