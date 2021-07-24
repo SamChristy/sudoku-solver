@@ -1,4 +1,5 @@
 import isNode from 'detect-node';
+import path from 'path';
 import { createWorker, ImageLike, PSM, Worker, WorkerOptions, WorkerParams } from 'tesseract.js';
 
 import DigitExtractorInterface from '../../types/interfaces/DigitExtractor';
@@ -17,7 +18,7 @@ export default class DigitExtractor implements DigitExtractorInterface {
     // Configure Tesseract worker to not make external download requests...
     const workerConfig: Partial<WorkerOptions> = isNode
       ? {
-          langPath: `${__dirname}/../../../public/ocr`,
+          langPath: path.join(__dirname, '..', '..', '..', `public/ocr`),
           // It should be faster to cache the uncompressed lang data, although there seems to be no
           // real difference in practice; so we may as well keep the repo smaller.
           cacheMethod: 'none',
