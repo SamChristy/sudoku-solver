@@ -57,7 +57,6 @@ export const isContourSquarish = (
   const minArea = Math.min(container.rows, container.cols) ** 2 * minSize;
   const sizeLimit = Math.max(container.rows, container.cols) * maxSize;
 
-  // TODO: Tweak min-area threshold so that the 'design-3.jpg' test passes.
   if (cv.contourArea(contour) >= minArea) {
     const coords = getContourPathCoords(contour);
 
@@ -150,8 +149,6 @@ export const isEmpty = (src: cv.Mat) => {
 /**
  * Tesseract is notoriously bad at extracting text from table cells; so we need help it out, by
  * cropping the cell's contents to remove any edges (which can be mistaken for characters).
- *
- * @todo Move to SudokuScanner?
  */
 export const cropCellBorders = (src: cv.Mat, binary: cv.Mat): cv.Mat | null => {
   const cellCenter = [Math.round(binary.rows / 2), Math.round(binary.cols / 2)] as Point;
