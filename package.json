@@ -2,6 +2,12 @@
   "name": "sudoku-solver",
   "version": "0.1.0",
   "private": true,
+  "author": "Sam Christy (https://github.com/SamChristy)",
+  "license": "MIT",
+  "homepage": "http://samchristy.github.io/sudoku-solver",
+  "bugs": {
+    "url": "https://github.com/SamChristy/sudoku-solver/issues"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/react": "^11.2.6",
@@ -33,6 +39,7 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "eslint-plugin-testing-library": "^3.10.2",
+    "gh-pages": "^3.2.3",
     "jest-fail-on-console": "^2.0.4",
     "jest-image-snapshot": "^4.5.1",
     "node-sass": "^5.0.0",
@@ -64,6 +71,8 @@
     "start": "HTTPS=true react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx src --color --fix",
     "format": "prettier --write 'src/**/*.{ts,tsx,scss,css,json}'"
   },

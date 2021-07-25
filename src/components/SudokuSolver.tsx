@@ -38,6 +38,7 @@ export default function SudokuSolver() {
       const digit = await extractor.extractSingle(`7.png`);
 
       extractor.destruct();
+      // eslint-disable-next-line no-console
       console.log('extracted', digit);
     })();
 
