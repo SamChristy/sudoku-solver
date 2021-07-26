@@ -19,11 +19,12 @@ it('loads without crashing', () => {
 it("throws error, if OpenCV isn't loaded", () => {
   const instantiateSudokuScannerWithoutOpenCV = () => {
     const OpenCV = global.cv;
-    // @ts-ignore
+    // @ts-ignore -- this is the point of the test! 😁
     global.cv = undefined;
 
     try {
       const scanner = new SudokuScanner(document.createElement('canvas'));
+      scanner.destruct();
     } catch (e) {
       global.cv = OpenCV;
       throw e;
