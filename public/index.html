@@ -16,13 +16,5 @@
   <body>
     <noscript>You need to enable JavaScript to run this app!</noscript>
     <div id="root"></div>
-    <script>
-      (() => {
-        if (location.search.includes('console'))
-          document.write(
-            `<script src="%PUBLIC_URL%/mobileConsole.js"><\/script><script>eruda.init();<\/script>`
-          );
-      })();
-    </script>
   </body>
 </html>

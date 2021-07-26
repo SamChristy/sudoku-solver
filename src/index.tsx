@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+import { loadMobileConsole } from './util/browser';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -13,6 +14,8 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
+
+window.location.search.includes('console') && loadMobileConsole();
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
