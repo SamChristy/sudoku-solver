@@ -35,7 +35,7 @@ export default function SudokuSolver() {
     (async () => {
       const extractor = new DigitExtractor();
       await extractor.load();
-      const digit = await extractor.extractSingle(`7.png`);
+      const digit = await extractor.extractSingle(`${process.env.PUBLIC_URL}/7.png`);
 
       extractor.destruct();
       // eslint-disable-next-line no-console
