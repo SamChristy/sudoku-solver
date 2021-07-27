@@ -1,32 +1,28 @@
 import './App.scss';
 
-import { useEffect, useState } from 'react';
+import { useRef } from 'react';
 
-import SudokuSolver from './components';
-import { SudokuScanner } from './services';
+import { CameraFeed, SudokuScanner, SudokuSolver } from './components';
 
 export default function App() {
-  const [loading, setLoading] = useState(true);
-
-  // TODO: Add Error handling & browser feature checks
-
-  useEffect(() => {
-    (async () => {
-      await SudokuScanner.loadDependencies();
-      setLoading(false);
-    })();
-  }, []);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   return (
     <>
-      <button
-        style={{ position: 'fixed', top: '10px', left: '10px' }}
-        onClick={() => setLoading(!loading)}
-        type="button"
-      >
-        {loading ? 'mount' : 'unmout'}
-      </button>
-      {loading ? <i>Loading...</i> : <SudokuSolver />}
+      <header>
+        <h1>🧮 Sudoku Solver</h1>
+      </header>
+      <main>
+        {/* eslint-disable-next-line no-console */}
+        <CameraFeed ref={videoRef} onLoad={() => console.log('camera loaded.')} />
+        <SudokuScanner />
+        <SudokuSolver />
+      </main>
+      <footer>
+        <nav>
+          <button type="button">Upload</button>
+        </nav>
+      </footer>
     </>
   );
 }
