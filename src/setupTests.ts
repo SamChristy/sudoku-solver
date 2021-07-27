@@ -20,6 +20,5 @@ export default global;
 global.ImageData = ImageData;
 global.listNonHiddenFiles = (dir: PathLike) =>
   readdirSync(dir).filter(filename => !filename.startsWith('.'));
-global.cv = require('opencv4js');
 
 failOnConsole();

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import { SudokuScanner } from '../services';
-import DigitExtractor from '../services/DigitExtractor/DigitExtractor';
+import DigitReader from '../services/DigitReader/DigitReader';
 import { getFrame, loadCameraStream, turnOffCamera } from '../util/camera';
 
 export default function SudokuSolver() {
@@ -33,7 +33,7 @@ export default function SudokuSolver() {
 
     init();
     (async () => {
-      const extractor = new DigitExtractor();
+      const extractor = new DigitReader();
       await extractor.load();
       const digit = await extractor.extractSingle(`${process.env.PUBLIC_URL}/7.png`);
 
