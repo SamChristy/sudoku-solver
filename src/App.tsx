@@ -1,10 +1,11 @@
 import './App.scss';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import { CameraFeed, SudokuScanner, SudokuSolver } from './components';
 
 export default function App() {
+  const [cameraOn, setCameraOn] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   return (
@@ -13,8 +14,8 @@ export default function App() {
         <h1>🧮 Sudoku Solver</h1>
       </header>
       <main>
-        {/* eslint-disable-next-line no-console */}
-        <CameraFeed ref={videoRef} onLoad={() => console.log('camera loaded.')} />
+        <h2>{cameraOn ? '📷' : '📸'}</h2>
+        <CameraFeed ref={videoRef} onLoad={() => setCameraOn(true)} />
         <SudokuScanner />
         <SudokuSolver />
       </main>
