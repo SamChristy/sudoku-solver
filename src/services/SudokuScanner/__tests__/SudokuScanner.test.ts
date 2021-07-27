@@ -1,12 +1,12 @@
 import { loadImage } from 'canvas';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
+import cv from 'opencv4js';
 import path from 'path';
 
 import { canvasToBuffer } from '../../../util/canvas';
 import SudokuScanner from '../SudokuScanner';
 
-global.cv = require('opencv4js');
-
+global.cv = cv;
 expect.extend({ toMatchImageSnapshot });
 
 const { listNonHiddenFiles } = global;
@@ -20,7 +20,6 @@ it('loads without crashing', () => {
 
 it("throws error, if OpenCV isn't loaded", () => {
   const instantiateSudokuScannerWithoutOpenCV = () => {
-    const OpenCV = global.cv;
     // @ts-ignore -- this is the point of the test! 😁
     global.cv = undefined;
 
@@ -28,7 +27,7 @@ it("throws error, if OpenCV isn't loaded", () => {
       const scanner = new SudokuScanner(document.createElement('canvas'));
       scanner.destruct();
     } catch (e) {
-      global.cv = OpenCV;
+      global.cv = cv;
       throw e;
     }
   };
