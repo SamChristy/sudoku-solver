@@ -4,7 +4,7 @@
  */
 import path from 'path';
 
-import DigitExtractor from '../DigitExtractor';
+import DigitReader from '../DigitReader';
 
 const digitsDir = path.join(
   __dirname,
@@ -13,7 +13,7 @@ const digitsDir = path.join(
 
 it('loads without crashing', () => {
   const load = async () => {
-    const extractor = new DigitExtractor();
+    const extractor = new DigitReader();
     await extractor.load();
     extractor.destruct();
   };
@@ -21,8 +21,8 @@ it('loads without crashing', () => {
   expect(load).not.toThrowError();
 });
 
-it('extracts digit from image', async () => {
-  const extractor = new DigitExtractor();
+it('reads digit in image', async () => {
+  const extractor = new DigitReader();
   await extractor.load();
   const digit = await extractor.extractSingle(
     path.join(digitsDir, 'sudoku-scanner-test-ts-extracts-numbers-design-3-jpg-1-snap.png')

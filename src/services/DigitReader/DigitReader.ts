@@ -2,9 +2,9 @@ import isNode from 'detect-node';
 import path from 'path';
 import { createWorker, ImageLike, PSM, Worker, WorkerOptions, WorkerParams } from 'tesseract.js';
 
-import DigitExtractorInterface from '../../types/interfaces/DigitExtractor';
+import DigitReaderInterface from '../../types/interfaces/DigitReader';
 
-export default class DigitExtractor implements DigitExtractorInterface {
+export default class DigitReader implements DigitReaderInterface {
   protected readonly worker: Worker;
   protected readonly language = 'eng';
   protected readonly tesseractConfig: Partial<WorkerParams> = {

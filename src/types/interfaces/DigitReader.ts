@@ -1,6 +1,6 @@
 import { ImageLike } from 'tesseract.js';
 
-export default interface DigitExtractor {
+export default interface DigitReader {
   /**
    * Loads dependencies, so the extractor is ready for use.
    */
