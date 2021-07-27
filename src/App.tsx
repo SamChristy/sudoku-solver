@@ -12,11 +12,10 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      if (!loading) return;
       await SudokuScanner.loadDependencies();
       setLoading(false);
     })();
-  }, [loading]);
+  }, []);
 
   return (
     <>
