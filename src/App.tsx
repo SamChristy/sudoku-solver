@@ -1,14 +1,22 @@
 import './App.scss';
 
-import { OpenCvProvider } from 'opencv-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import SudokuSolver from './components';
+import { SudokuScanner } from './services';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
 
   // TODO: Add Error handling & browser feature checks
+
+  useEffect(() => {
+    (async () => {
+      if (!loading) return;
+      await SudokuScanner.loadDependencies();
+      setLoading(false);
+    })();
+  }, [loading]);
 
   return (
     <>
@@ -19,12 +27,7 @@ export default function App() {
       >
         {loading ? 'mount' : 'unmout'}
       </button>
-      <OpenCvProvider
-        onLoad={() => setLoading(false)}
-        openCvPath={`${process.env.PUBLIC_URL}/opencv.js`}
-      >
-        {loading ? <i>Loading...</i> : <SudokuSolver />}
-      </OpenCvProvider>
+      {loading ? <i>Loading...</i> : <SudokuSolver />}
     </>
   );
 }
