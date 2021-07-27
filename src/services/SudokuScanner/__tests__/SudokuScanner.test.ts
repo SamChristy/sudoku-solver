@@ -5,6 +5,8 @@ import path from 'path';
 import { canvasToBuffer } from '../../../util/canvas';
 import SudokuScanner from '../SudokuScanner';
 
+global.cv = require('opencv4js');
+
 expect.extend({ toMatchImageSnapshot });
 
 const { listNonHiddenFiles } = global;
