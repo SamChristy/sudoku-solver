@@ -128,7 +128,6 @@ export const split = (src: cv.Mat, rows: number, columns: number): cv.Mat[][] =>
     for (let c = 0; c < columns; c++) {
       const x = c * squareWidth;
       const y = r * squareHeight;
-      // @ts-ignore
       const crop = new cv.Rect(x, y, squareWidth, squareHeight);
       squares[r][c] = src.roi(crop);
     }
@@ -142,7 +141,6 @@ export const isEmpty = (src: cv.Mat) => {
   const stdDev = new cv.Mat(1, 4, cv.CV_64F);
   cv.meanStdDev(src, mean, stdDev);
 
-  // @ts-ignore -- TODO Add missing CV type definitions, to avoid @ts-ignores
   return mean.doubleAt(0, 0) >= CELL_EMPTY_THRESHOLD;
 };
 

@@ -1084,7 +1084,7 @@ declare namespace cv {
     static zeros(cols: number, rows: number, type: (...args: any) => any): cv.Mat {}
     size: () => { width: number; height: number };
     clone(): Mat;
-    doubleAt(number: number, number2: number) {}
+    doubleAt(number: number, number2: number): number {}
     roi(crop: any): Mat;
   }
   export function rotatedRectPoints(...args: any): any;
@@ -2188,7 +2188,9 @@ declare namespace cv {
   export class Size {
     constructor(width: number, height: number): any {}
   }
-  export function Rect(...args: any): any;
+  export class Rect {
+    constructor(x: number, y: number, width: number, height: number): any {}
+  }
   export function RotatedRect(...args: any): any;
   export class Scalar {
     constructor(x: number, y: number, z: number): any {}
