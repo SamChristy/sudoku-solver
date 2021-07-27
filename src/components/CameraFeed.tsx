@@ -40,7 +40,6 @@ const CameraFeed = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Prop
 
   return (
     <div>
-      [CameraFeed]
       <video
         ref={ref}
         onLoadedMetadata={() => onStatusUpdate(CameraStatus.Active)}
