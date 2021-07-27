@@ -68,7 +68,7 @@
   },
   "scripts": {
     "unpack-scripts": "rsync --checksum --ignore-times node_modules/opencv4js/opencv.js public/ && rsync node_modules/tesseract.js/dist/worker.min.js public/ocr && rsync node_modules/tesseract.js-core/tesseract-core.wasm.js public/ocr",
-    "start": "HTTPS=true npm run unpack-scripts && react-scripts start",
+    "start": "npm run unpack-scripts && HTTPS=true react-scripts start",
     "build": "react-scripts build && npm run unpack-scripts",
     "test": "react-scripts test",
     "predeploy": "npm run build",
