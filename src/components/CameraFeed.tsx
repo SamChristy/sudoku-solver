@@ -3,10 +3,24 @@ import { forwardRef, MutableRefObject, useEffect } from 'react';
 import { onBack, onTabChange } from '../util/browser';
 import { loadCameraStream, turnOffCamera } from '../util/camera';
 
-const CameraFeed = forwardRef<HTMLVideoElement, Props>(({ onLoad }: Props, ref) => {
+export enum CameraStatus {
+  Loading,
+  Active,
+  Unavailable,
+}
+
+/**
+ * Renders a video feed of the user's camera (if one is available, with permission granted).
+ */
+const CameraFeed = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Props, ref) => {
   useEffect(() => {
     const { current } = ref as MutableRefObject<HTMLVideoElement | null>;
     if (!current) return () => {};
+
+    loadCameraStream(current).catch(() => {
+      onStatusUpdate(CameraStatus.Unavailable);
+      return () => {};
+    });
 
     // Pause the user's camera, when they're not actively using the app (to respect their device's
     // battery and stop the annoying "camera-in-use" icons/webcam lights).
@@ -18,21 +32,24 @@ const CameraFeed = forwardRef<HTMLVideoElement, Props>(({ onLoad }: Props, ref) 
       onBack(() => loadCameraStream(current)),
     ];
 
-    loadCameraStream(current);
-
     return () => {
       turnOffCamera(current);
       listenerCleanups.forEach(cleanup => cleanup());
     };
-  }, [ref]);
+  }, [onStatusUpdate, ref]);
 
   return (
     <div>
       [CameraFeed]
-      <video ref={ref} onLoadedMetadata={onLoad} muted playsInline />
+      <video
+        ref={ref}
+        onLoadedMetadata={() => onStatusUpdate(CameraStatus.Active)}
+        playsInline
+        muted
+      />
     </div>
   );
 });
 
-type Props = { onLoad(): void };
+type Props = { onStatusUpdate(status: CameraStatus): void };
 export default CameraFeed;
