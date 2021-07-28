@@ -6,6 +6,7 @@ import { loadCameraStream, turnOffCamera } from '../util/camera';
 export enum CameraStatus {
   Loading,
   Active,
+  Denied,
   Unavailable,
 }
 
@@ -20,7 +21,9 @@ const CameraFeed = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Prop
     // app's tab being minimised! 🙄 (This block will be auto-stripped from the actual build.)
     if (process.env.NODE_ENV !== 'production' && document.hidden) return () => {};
 
-    loadCameraStream(current).catch(() => onStatusUpdate(CameraStatus.Unavailable));
+    loadCameraStream(current).catch(({ name }) =>
+      onStatusUpdate(name === 'NotAllowedError' ? CameraStatus.Denied : CameraStatus.Unavailable)
+    );
 
     // Pause the user's camera, when they're not actively using the app (to respect their device's
     // battery and stop the annoying "camera-in-use" icons/webcam lights).
@@ -42,6 +45,7 @@ const CameraFeed = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Prop
     <video
       ref={ref}
       onLoadedMetadata={() => onStatusUpdate(CameraStatus.Active)}
+      onSuspend={() => onStatusUpdate(CameraStatus.Unavailable)}
       playsInline
       muted
     />

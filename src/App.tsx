@@ -19,6 +19,7 @@ export default function App() {
             {
               [CameraStatus.Loading]: '⏳',
               [CameraStatus.Active]: '🎥',
+              [CameraStatus.Denied]: '✋',
               [CameraStatus.Unavailable]: '🚫',
             }[cameraStatus]
           }
