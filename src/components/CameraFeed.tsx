@@ -16,6 +16,9 @@ const CameraFeed = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Prop
   useEffect(() => {
     const { current } = ref as MutableRefObject<HTMLVideoElement | null>;
     if (!current) return () => {};
+    // Prevent Webpack rebuilds from constantly turning my webcam on, in development, despite the
+    // app's tab being minimised! 🙄 (This block will be auto-stripped from the actual build.)
+    if (process.env.NODE_ENV !== 'production' && document.hidden) return () => {};
 
     loadCameraStream(current).catch(() => {
       onStatusUpdate(CameraStatus.Unavailable);
