@@ -20,10 +20,7 @@ const CameraFeed = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Prop
     // app's tab being minimised! 🙄 (This block will be auto-stripped from the actual build.)
     if (process.env.NODE_ENV !== 'production' && document.hidden) return () => {};
 
-    loadCameraStream(current).catch(() => {
-      onStatusUpdate(CameraStatus.Unavailable);
-      return () => {};
-    });
+    loadCameraStream(current).catch(() => onStatusUpdate(CameraStatus.Unavailable));
 
     // Pause the user's camera, when they're not actively using the app (to respect their device's
     // battery and stop the annoying "camera-in-use" icons/webcam lights).
@@ -42,14 +39,12 @@ const CameraFeed = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Prop
   }, [onStatusUpdate, ref]);
 
   return (
-    <div>
-      <video
-        ref={ref}
-        onLoadedMetadata={() => onStatusUpdate(CameraStatus.Active)}
-        playsInline
-        muted
-      />
-    </div>
+    <video
+      ref={ref}
+      onLoadedMetadata={() => onStatusUpdate(CameraStatus.Active)}
+      playsInline
+      muted
+    />
   );
 });
 
