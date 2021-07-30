@@ -1,6 +1,9 @@
 import isNode from 'detect-node';
 
-import SudokuScannerInterface, { SudokuScannerConfig } from '../../types/interfaces/SudokuScanner';
+import SudokuScannerInterface, {
+  SudokuDigitImages,
+  SudokuScannerConfig,
+} from '../../types/interfaces/SudokuScanner';
 import { loadScript } from '../../util/browser';
 import {
   cropAndFlatten,
@@ -76,7 +79,7 @@ export default class SudokuScanner implements SudokuScannerInterface {
   }
 
   /** @inheritDoc */
-  public extractDigits(): (HTMLCanvasElement | null)[][] | null {
+  public extractDigits(): SudokuDigitImages {
     // If we didn't find a Sudoku, then we won't find any digits...
     if (this.processed === null) return null;
 

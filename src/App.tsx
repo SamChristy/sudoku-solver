@@ -6,6 +6,7 @@ import { CameraFeed, CameraStatus, SudokuScanner, SudokuSolver } from './compone
 
 export default function App() {
   const [cameraStatus, setCameraStatus] = useState(CameraStatus.Loading);
+  const [cameraMounted, setCameraMounted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   return (
@@ -14,18 +15,15 @@ export default function App() {
         <h1>🧮 Sudoku Solver</h1>
       </header>
       <main>
-        <h2>
-          {
-            {
-              [CameraStatus.Loading]: '⏳',
-              [CameraStatus.Active]: '🎥',
-              [CameraStatus.Denied]: '✋',
-              [CameraStatus.Unavailable]: '🚫',
-            }[cameraStatus]
-          }
-        </h2>
-        <CameraFeed ref={videoRef} onStatusUpdate={setCameraStatus} />
-        <SudokuScanner />
+        <button type="button" onClick={() => setCameraMounted(c => !c)}>
+          {cameraMounted ? 'Unmount' : 'Mount'} CameraFeed
+        </button>
+        {cameraMounted && <CameraFeed ref={videoRef} onStatusUpdate={setCameraStatus} />}
+
+        {cameraStatus === CameraStatus.Active && (
+          <SudokuScanner source={videoRef.current} onFound={sudoku => console.log(sudoku)} />
+        )}
+
         <SudokuSolver />
       </main>
       <footer>

@@ -13,6 +13,8 @@ export interface SudokuScannerConfig {
   maxSize: number;
 }
 
+export type SudokuDigitImages = (HTMLCanvasElement | null)[][] | null;
+
 export default interface SudokuScanner {
   /**
    * Extracts the largest Sudoku from the source image, returning a boolean and, optionally, loading
@@ -23,7 +25,7 @@ export default interface SudokuScanner {
   /**
    * Extracts digits from the source image (ideal for OCR).
    */
-  extractDigits(): (HTMLCanvasElement | null)[][] | null;
+  extractDigits(): SudokuDigitImages;
 
   /**
    * Releases resources that were assigned by the scanner - it's vital to call this, to avoid memory

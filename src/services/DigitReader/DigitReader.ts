@@ -42,11 +42,23 @@ export default class DigitReader implements DigitReaderInterface {
   }
 
   /** @inheritDoc */
-  public async extractSingle(imageSource: ImageLike): Promise<string> {
+  public async extractSingle(imageSource: ImageLike): Promise<number | null> {
     // TODO: Check other returned symbols and use Sudoku constraints to inform selection.
     const { data } = await this.worker.recognize(imageSource);
+    const digitChart = data.text.slice(0, 1); // Tesseract sometimes returns multiple chars!
 
-    return data.text.slice(0, 1); // Tesseract sometimes returns multiple chars!
+    return digitChart ? +digitChart : null;
+  }
+
+  /* @inheritDoc */
+  public async extractMultiple(imageSources: ImageLike[]): Promise<(number | null)[]> {
+    const extracted = Array(imageSources.length);
+
+    for (let i = 0; i < imageSources.length; i++)
+      // eslint-disable-next-line no-await-in-loop -- TODO: Parallelise extractMultiple()!
+      extracted[i] = await this.extractSingle(imageSources[i]);
+
+    return extracted;
   }
 
   /** @inheritDoc */
