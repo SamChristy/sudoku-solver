@@ -29,5 +29,5 @@ it('reads digit in image', async () => {
   );
 
   extractor.destruct();
-  expect(digit).toEqual('7');
+  expect(digit).toEqual(7);
 });
