@@ -21,7 +21,7 @@ const Camera = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Props, r
     // app's tab being minimised! 🙄 (This block will be auto-stripped from the actual build.)
     if (process.env.NODE_ENV !== 'production' && document.hidden) return () => {};
 
-    turnOnCamera(current).catch(({ name }) =>
+    turnOnCamera(current, { width: 800, height: 800 }).catch(({ name }) =>
       onStatusUpdate(name === 'NotAllowedError' ? CameraStatus.Denied : CameraStatus.Unavailable)
     );
 

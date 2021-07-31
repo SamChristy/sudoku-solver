@@ -41,23 +41,24 @@ export default function SudokuScanner({ source, onFound }: Props) {
         setScannerLoaded(true);
       });
       reader.load().then(() => setReaderLoaded(true));
-    } else
+    }
+    // TODO: Delay digit extraction until the reader's actually loaded!
+    else
       Promise.all(
         digitImages.map(row =>
-          Promise.all(row.map(digit => (digit ? 5 || reader.extractSingle(digit) : null)))
+          Promise.all(row.map(digit => (digit ? reader.extractSingle(digit) : null)))
         )
-      ).then(sudoku => onFound(sudoku));
-
-    return () => {
-      reader.destruct();
-    };
+      ).then(sudoku => {
+        reader.destruct();
+        onFound(sudoku);
+      });
   }, [digitImages, onFound, processStream, reader]);
 
   return (
     <div>
       <canvas ref={canvasRef} />
       {!scannerLoaded && 'Please wait while the scanner loads...'}
-      {digitImages && !readerLoaded && 'Please wait while the reader loads...'}
+      {!readerLoaded && 'Please wait while the reader loads...'}
     </div>
   );
 }
