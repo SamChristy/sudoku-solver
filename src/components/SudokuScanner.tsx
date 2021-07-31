@@ -13,7 +13,6 @@ export default function SudokuScanner({ source, onFound }: Props) {
   const [digitImages, setDigitImages] = useState<SudokuDigitImages>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reader = useMemo(() => new DigitReader(), []);
-
   const processStream = useCallback(() => {
     const start = Date.now();
     let found = false;
@@ -35,28 +34,16 @@ export default function SudokuScanner({ source, onFound }: Props) {
 
   useEffect(() => {
     console.log('useEffect()');
-    let waitIntervalId: number | null = null;
-    const readDigitsWhenReady = (images: (HTMLCanvasElement | null)[][]) => {
-      if (readerLoaded) {
-        console.log('starting reading 🔎');
-
-        if (waitIntervalId !== null) {
-          console.log('clearInterval()', waitIntervalId);
-          window.clearInterval(waitIntervalId);
-        }
-
-        Promise.all(
-          images.map(row =>
-            Promise.all(row.map(digit => (digit ? reader.extractSingle(digit) : null)))
-          )
-        ).then(sudoku => {
-          onFound(sudoku);
-          window.setTimeout(() => reader.destruct());
-        });
-      } else if (waitIntervalId === null)
-        waitIntervalId = window.setInterval(() => readDigitsWhenReady(images), 10);
-
-      console.log(waitIntervalId);
+    const readDigits = (images: (HTMLCanvasElement | null)[][]) => {
+      console.log('readDigits() 🔎');
+      Promise.all(
+        images.map(row =>
+          Promise.all(row.map(digit => (digit ? reader.extractSingle(digit) : null)))
+        )
+      ).then(sudoku => {
+        onFound(sudoku);
+        window.setTimeout(() => reader.destruct());
+      });
     };
 
     if (!digitImages) {
@@ -64,21 +51,11 @@ export default function SudokuScanner({ source, onFound }: Props) {
         processStream();
         setScannerLoaded(true);
       });
-      reader.load().then(() => setReaderLoaded(true));
-    } else if (!readerLoaded) {
-      console.log('readDigitsWhenReady()');
-      readDigitsWhenReady(digitImages);
-    } else {
-      console.log('read digits straight away! :)');
-      Promise.all(
-        digitImages.map(row =>
-          Promise.all(row.map(digit => (digit ? reader.extractSingle(digit) : null)))
-        )
-      ).then(sudoku => {
-        onFound(sudoku);
-        window.setTimeout(() => reader.destruct());
+      reader.load().then(() => {
+        digitImages && readDigits(digitImages);
+        setReaderLoaded(true);
       });
-    }
+    } else if (readerLoaded) readDigits(digitImages);
   }, [digitImages, onFound, processStream, reader, readerLoaded]);
 
   return (
