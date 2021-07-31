@@ -13,13 +13,13 @@ export default function SudokuScanner({ source, onFound }: Props) {
   const [digitImages, setDigitImages] = useState<SudokuDigitImages>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reader = useMemo(() => new DigitReader(), []);
+
   const processStream = useCallback(() => {
     const start = Date.now();
     let found = false;
 
     if (source && canvasRef.current) {
       const frame = getFrame(source);
-
       if (frame) {
         const scanner = new SudokuScannerService(frame);
         found = scanner.extractSudokuImage(canvasRef.current);

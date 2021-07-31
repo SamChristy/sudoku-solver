@@ -1,8 +1,36 @@
+$width: 85vw;
+$height: $width;
+$borderThin: calc(#{$height} / 1000) solid black;
+$borderThick: calc(#{$height} / 125) solid black;
+
 .sudokuSolver {
-  width: 100vw;
-  height: 100vw;
-  text-align: center;
-  vertical-align: center;
-  font-size: calc(100vw / 12);
+  width: $width;
+  height: $height;
+  box-sizing: border-box;
+  margin: 0 auto;
+  margin-top: calc((100vw - #{$height}) / 2);
+  margin-bottom: calc((100vw - #{$height}) / 2);
+  font-size: calc(#{$height} / 12);
   font-weight: 700;
+  border-collapse: collapse;
+  table-layout: fixed;
+  border: $borderThick;
+
+  td {
+    border: $borderThin;
+    vertical-align: middle;
+    text-align: center;
+    width: calc(100% / 9);
+    max-width: calc(100% / 9);
+    max-height: calc(100% / 9);
+  }
+  tr {
+    height: calc(100% / 9);
+  }
+  tr:nth-child(3n) {
+    border-bottom: $borderThick;
+  }
+  td:nth-child(3n) {
+    border-right: $borderThick;
+  }
 }
