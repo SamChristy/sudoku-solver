@@ -1,7 +1,7 @@
 import { forwardRef, MutableRefObject, useEffect } from 'react';
 
 import { onBack, onTabChange } from '../util/browser';
-import { loadCameraStream, turnOffCamera } from '../util/camera';
+import { turnOffCamera, turnOnCamera } from '../util/camera';
 
 export enum CameraStatus {
   Loading,
@@ -13,7 +13,7 @@ export enum CameraStatus {
 /**
  * Renders a video feed of the user's camera (if one is available, with permission granted).
  */
-const CameraFeed = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Props, ref) => {
+const Camera = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Props, ref) => {
   useEffect(() => {
     const { current } = ref as MutableRefObject<HTMLVideoElement | null>;
     if (!current) return () => {};
@@ -21,7 +21,7 @@ const CameraFeed = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Prop
     // app's tab being minimised! 🙄 (This block will be auto-stripped from the actual build.)
     if (process.env.NODE_ENV !== 'production' && document.hidden) return () => {};
 
-    loadCameraStream(current, { width: 600, height: 600 }).catch(({ name }) =>
+    turnOnCamera(current).catch(({ name }) =>
       onStatusUpdate(name === 'NotAllowedError' ? CameraStatus.Denied : CameraStatus.Unavailable)
     );
 
@@ -30,9 +30,9 @@ const CameraFeed = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Prop
     const listenerCleanups = [
       onTabChange({
         closed: () => turnOffCamera(current),
-        opened: () => loadCameraStream(current),
+        opened: () => turnOnCamera(current),
       }),
-      onBack(() => loadCameraStream(current)),
+      onBack(() => turnOnCamera(current)),
     ];
 
     return () => {
@@ -53,4 +53,4 @@ const CameraFeed = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Prop
 });
 
 type Props = { onStatusUpdate(status: CameraStatus): void };
-export default CameraFeed;
+export default Camera;

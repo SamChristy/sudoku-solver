@@ -33,7 +33,7 @@ export const identifyPrimaryCamera = async (): Promise<MediaDeviceInfo | null> =
 /**
  *  Loads video stream into the supplied <video /> element.
  */
-export const loadCameraStream = async (videoElement: HTMLVideoElement, dimensions?: Resolution) => {
+export const turnOnCamera = async (videoElement: HTMLVideoElement, dimensions?: Resolution) => {
   const camera = await identifyPrimaryCamera();
   const constraints = {
     video: {

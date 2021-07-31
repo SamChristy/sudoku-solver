@@ -2,7 +2,7 @@ import './App.scss';
 
 import { useRef, useState } from 'react';
 
-import { CameraFeed, CameraStatus, SudokuScanner, SudokuSolver } from './components';
+import { Camera, CameraStatus, SudokuScanner, SudokuSolver } from './components';
 
 export default function App() {
   const [cameraStatus, setCameraStatus] = useState(CameraStatus.Loading);
@@ -18,7 +18,7 @@ export default function App() {
         <button type="button" onClick={() => setCameraMounted(c => !c)}>
           {cameraMounted ? 'Unmount' : 'Mount'} CameraFeed
         </button>
-        {cameraMounted && <CameraFeed ref={videoRef} onStatusUpdate={setCameraStatus} />}
+        {cameraMounted && <Camera ref={videoRef} onStatusUpdate={setCameraStatus} />}
 
         {cameraStatus === CameraStatus.Active && (
           <SudokuScanner source={videoRef.current} onFound={sudoku => console.log(sudoku)} />
