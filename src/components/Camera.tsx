@@ -27,12 +27,12 @@ const Camera = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Props, r
 
     // Pause the user's camera, when they're not actively using the app (to respect their device's
     // battery and stop the annoying "camera-in-use" icons/webcam lights).
-    const listenerCleanups = [
-      onTabChange({
-        closed: () => turnOffCamera(current),
-        opened: () => turnOnCamera(current),
-      }),
-      onBack(() => turnOnCamera(current)),
+    const listenerCleanups: Array<() => void> = [
+      // onTabChange({
+      //   closed: () => turnOffCamera(current),
+      //   opened: () => turnOnCamera(current),
+      // }),
+      // onBack(() => turnOnCamera(current)),
     ];
 
     return () => {
