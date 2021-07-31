@@ -1,18 +1,18 @@
-export default function SudokuSolver() {
+import { Sudoku } from '../types/interfaces/SudokuSolver';
+
+export default function SudokuSolver({ sudoku }: { sudoku: Sudoku }) {
+  let i = 0;
   return (
     <table>
       <tbody>
-        {Array(9)
-          .fill(1)
-          .map(() => (
-            <tr>
-              {Array(9)
-                .fill(1)
-                .map(() => (
-                  <td>{Math.floor(Math.random() * 10) || ''}</td>
-                ))}
-            </tr>
-          ))}
+        {sudoku.map(row => (
+          <tr key={i}>
+            {row.map(cell => (
+              // eslint-disable-next-line no-plusplus -- 🙄
+              <td key={i++}>{cell}</td>
+            ))}
+          </tr>
+        ))}
       </tbody>
     </table>
   );

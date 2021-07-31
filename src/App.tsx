@@ -3,10 +3,12 @@ import './App.scss';
 import { useRef, useState } from 'react';
 
 import { Camera, CameraStatus, SudokuScanner, SudokuSolver } from './components';
+import { Sudoku } from './types/interfaces/SudokuSolver';
 
 export default function App() {
   const [cameraStatus, setCameraStatus] = useState(CameraStatus.Loading);
   const [cameraMounted, setCameraMounted] = useState(true);
+  const [sudoku, setSudoku] = useState<Sudoku | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   return (
@@ -20,11 +22,11 @@ export default function App() {
         </button>
         {cameraMounted && <Camera ref={videoRef} onStatusUpdate={setCameraStatus} />}
 
-        {cameraStatus === CameraStatus.Active && (
-          <SudokuScanner source={videoRef.current} onFound={sudoku => console.log(sudoku)} />
+        {cameraStatus === CameraStatus.Active && !sudoku && (
+          <SudokuScanner source={videoRef.current} onFound={setSudoku} />
         )}
 
-        <SudokuSolver />
+        {sudoku && <SudokuSolver sudoku={sudoku} />}
       </main>
       <footer>
         <nav>
