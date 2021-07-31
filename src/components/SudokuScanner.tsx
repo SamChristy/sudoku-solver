@@ -34,11 +34,17 @@ export default function SudokuScanner({ source, onFound }: Props) {
   }, [source]);
 
   useEffect(() => {
+    console.log('useEffect()');
     let waitIntervalId: number | null = null;
     const readDigitsWhenReady = (images: (HTMLCanvasElement | null)[][]) => {
       if (readerLoaded) {
         console.log('starting reading 🔎');
-        waitIntervalId && window.clearInterval(waitIntervalId);
+
+        if (waitIntervalId !== null) {
+          console.log('clearInterval()', waitIntervalId);
+          window.clearInterval(waitIntervalId);
+        }
+
         Promise.all(
           images.map(row =>
             Promise.all(row.map(digit => (digit ? reader.extractSingle(digit) : null)))
@@ -50,7 +56,7 @@ export default function SudokuScanner({ source, onFound }: Props) {
       } else if (waitIntervalId === null)
         waitIntervalId = window.setInterval(() => readDigitsWhenReady(images), 10);
 
-      console.log('wait...');
+      console.log(waitIntervalId);
     };
 
     if (!digitImages) {
@@ -59,9 +65,19 @@ export default function SudokuScanner({ source, onFound }: Props) {
         setScannerLoaded(true);
       });
       reader.load().then(() => setReaderLoaded(true));
-    } else {
+    } else if (!readerLoaded) {
       console.log('readDigitsWhenReady()');
       readDigitsWhenReady(digitImages);
+    } else {
+      console.log('read digits straight away! :)');
+      Promise.all(
+        digitImages.map(row =>
+          Promise.all(row.map(digit => (digit ? reader.extractSingle(digit) : null)))
+        )
+      ).then(sudoku => {
+        onFound(sudoku);
+        window.setTimeout(() => reader.destruct());
+      });
     }
   }, [digitImages, onFound, processStream, reader, readerLoaded]);
 
