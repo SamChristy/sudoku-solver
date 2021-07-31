@@ -1,9 +1,10 @@
 import { Sudoku } from '../types/interfaces/SudokuSolver';
+import styles from './SudokuSolver.module.scss';
 
 export default function SudokuSolver({ sudoku }: { sudoku: Sudoku }) {
   let i = 0;
   return (
-    <table>
+    <table className={styles.sudokuSolver}>
       <tbody>
         {sudoku.map(row => (
           <tr key={i}>

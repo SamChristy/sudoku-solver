@@ -71,6 +71,7 @@ export default class DigitReader implements DigitReaderInterface {
 
   /** @inheritDoc */
   public async destruct() {
-    await this.scheduler.terminate();
+    console.log('Reader.destruct()', this);
+    // await this.scheduler.terminate();
   }
 }
