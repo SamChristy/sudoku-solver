@@ -5,9 +5,11 @@ import { SudokuDigitImages } from '../types/interfaces/SudokuScanner';
 import { Sudoku } from '../types/interfaces/SudokuSolver';
 import { getFrame } from '../util/camera';
 
-const FPS_LIMIT = 15;
-
-export default function SudokuScanner({ source, onFound }: Props) {
+/**
+ * Visual UI, designed to be rendered on top of the <video> element that is its source. The video
+ * source is scanned for Sudoku-like objects.
+ */
+export default function SudokuScanner({ source, onFound, scanHz = 30 }: Props) {
   const [loadingStarted, setLoadingStarted] = useState(false);
   const [scannerLoaded, setScannerLoaded] = useState(false);
   const [readerLoaded, setReaderLoaded] = useState(false);
@@ -15,7 +17,10 @@ export default function SudokuScanner({ source, onFound }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reader = useMemo(() => new DigitReader(), []);
 
-  const processStream = useCallback(() => {
+  /**
+   * Continuously scan the source video, until a sudoku-like image is found.
+   */
+  const scanSource = useCallback(() => {
     const start = Date.now();
     let found = false;
 
@@ -30,44 +35,61 @@ export default function SudokuScanner({ source, onFound }: Props) {
     }
 
     const timeTaken = Date.now() - start;
-    !found && window.setTimeout(processStream, 1000 / FPS_LIMIT - timeTaken);
-  }, [source]);
-  const readDigits = useCallback(
-    (images: SudokuDigitImages) => {
+    !found && window.setTimeout(scanSource, 1000 / scanHz - timeTaken);
+  }, [scanHz, source]);
+
+  /**
+   * Runs OCR on `digitImages`, if is populated. The resulting 2D array of numbers, is used to
+   * build a Sudoku object, which is returned to the parent via `onFound()`.
+   */
+  const readPendingDigits = useCallback(
+    () =>
+      digitImages &&
       Promise.all(
-        images.map(row =>
-          Promise.all(row.map(digit => (digit ? reader.extractSingle(digit) : null)))
-        )
-      ).then(sudoku => {
-        onFound(sudoku);
-        window.setTimeout(() => reader.destruct(), 500);
-      });
-    },
-    [onFound, reader]
+        digitImages.map(row => Promise.all(row.map(digit => (digit ? reader.read(digit) : null))))
+      ).then(onFound),
+    [digitImages, onFound, reader]
   );
 
   useEffect(() => {
-    if (!loadingStarted && !digitImages) {
+    // Both the SudokuScanner and TextReader have large (~10+ MB) dependencies to load (which, even
+    // if cached, can still take several seconds to parse). We want to make the experience seem as
+    // fast as possible for the user; so we proceed as far as we can at each step, before hitting a
+    // roadblock (where we are forced to display a "this library is loading..." message).
+    if (!loadingStarted) {
       SudokuScannerService.loadDependencies().then(() => {
-        processStream();
+        scanSource();
         setScannerLoaded(true);
       });
       reader.load().then(() => {
-        digitImages && readDigits(digitImages);
+        readPendingDigits();
         setReaderLoaded(true);
       });
       setLoadingStarted(true);
-    } else if (digitImages && readerLoaded) readDigits(digitImages);
-  }, [digitImages, loadingStarted, processStream, readDigits, reader, readerLoaded]);
+    }
+  }, [loadingStarted, readPendingDigits, reader, scanSource]);
+
+  useEffect(() => {
+    if (readerLoaded) readPendingDigits();
+  }, [readPendingDigits, readerLoaded]);
+
+  useEffect(
+    () => () => {
+      // It's safer to call the destructor here, in case the component is unmounted before a sudoku
+      // is found.
+      // TODO: Move scanner and reader into global or parent state.
+      reader.destruct();
+    },
+    [reader]
+  );
 
   return (
     <div>
       {!scannerLoaded && 'Please wait while the scanner loads...'}
-      <br />
-      {!readerLoaded && 'Please wait while the reader loads...'}
+      {digitImages && !readerLoaded && 'Please wait while the reader loads...'}
       <canvas ref={canvasRef} />
     </div>
   );
 }
 
-type Props = { source: HTMLVideoElement | null; onFound(sudoku: Sudoku): void };
+type Props = { source: HTMLVideoElement | null; onFound(sudoku: Sudoku): void; scanHz?: number };

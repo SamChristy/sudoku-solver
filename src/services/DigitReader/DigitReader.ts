@@ -27,7 +27,7 @@ export default class DigitReader implements DigitReaderInterface {
     // Configure Tesseract worker to not make external download requests...
     this.workerConfig = isNode
       ? {
-          langPath: path.join(__dirname, '..', '..', '..', 'public', '/ocr'),
+          langPath: path.join(__dirname, '..', '..', '..', 'public', 'ocr'),
           // It should be faster to cache the uncompressed lang data, although there seems to be no
           // real difference in practice; so we may as well keep the repo smaller.
           cacheMethod: 'none',
@@ -71,7 +71,6 @@ export default class DigitReader implements DigitReaderInterface {
 
   /** @inheritDoc */
   public async destruct() {
-    console.log('Reader.destruct()', this);
-    // await this.scheduler.terminate();
+    await this.scheduler.terminate();
   }
 }
