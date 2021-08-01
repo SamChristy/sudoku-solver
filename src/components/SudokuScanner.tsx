@@ -5,9 +5,10 @@ import { SudokuDigitImages } from '../types/interfaces/SudokuScanner';
 import { Sudoku } from '../types/interfaces/SudokuSolver';
 import { getFrame } from '../util/camera';
 
-const FPS_LIMIT = 30;
+const FPS_LIMIT = 15;
 
 export default function SudokuScanner({ source, onFound }: Props) {
+  const [loadingStarted, setLoadingStarted] = useState(false);
   const [scannerLoaded, setScannerLoaded] = useState(false);
   const [readerLoaded, setReaderLoaded] = useState(false);
   const [digitImages, setDigitImages] = useState<SudokuDigitImages | null>(null);
@@ -31,21 +32,25 @@ export default function SudokuScanner({ source, onFound }: Props) {
     const timeTaken = Date.now() - start;
     !found && window.setTimeout(processStream, 1000 / FPS_LIMIT - timeTaken);
   }, [source]);
-
-  useEffect(() => {
-    const readDigits = (images: SudokuDigitImages) => {
+  const readDigits = useCallback(
+    (images: SudokuDigitImages) => {
       console.log('readDigits() 🔎');
+
       Promise.all(
         images.map(row =>
           Promise.all(row.map(digit => (digit ? reader.extractSingle(digit) : null)))
         )
       ).then(sudoku => {
         onFound(sudoku);
-        window.setTimeout(() => reader.destruct());
+        window.setTimeout(() => reader.destruct(), 500);
       });
-    };
+    },
+    [onFound, reader]
+  );
 
-    if (!digitImages) {
+  useEffect(() => {
+    if (!loadingStarted && !digitImages) {
+      console.log('<SudokuScanner />: start loading resources');
       SudokuScannerService.loadDependencies().then(() => {
         processStream();
         setScannerLoaded(true);
@@ -54,8 +59,10 @@ export default function SudokuScanner({ source, onFound }: Props) {
         digitImages && readDigits(digitImages);
         setReaderLoaded(true);
       });
-    } else if (readerLoaded) readDigits(digitImages);
-  }, [digitImages, onFound, processStream, reader, readerLoaded]);
+      setLoadingStarted(true);
+    } else if (digitImages && readerLoaded) readDigits(digitImages);
+    return () => console.log('unmount(<SudokuScanner />)');
+  }, [digitImages, loadingStarted, processStream, readDigits, reader, readerLoaded]);
 
   return (
     <div>
