@@ -10,7 +10,7 @@ const FPS_LIMIT = 30;
 export default function SudokuScanner({ source, onFound }: Props) {
   const [scannerLoaded, setScannerLoaded] = useState(false);
   const [readerLoaded, setReaderLoaded] = useState(false);
-  const [digitImages, setDigitImages] = useState<SudokuDigitImages>(null);
+  const [digitImages, setDigitImages] = useState<SudokuDigitImages | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reader = useMemo(() => new DigitReader(), []);
 
@@ -33,8 +33,7 @@ export default function SudokuScanner({ source, onFound }: Props) {
   }, [source]);
 
   useEffect(() => {
-    console.log('useEffect()');
-    const readDigits = (images: (HTMLCanvasElement | null)[][]) => {
+    const readDigits = (images: SudokuDigitImages) => {
       console.log('readDigits() 🔎');
       Promise.all(
         images.map(row =>
