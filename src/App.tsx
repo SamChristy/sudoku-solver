@@ -23,7 +23,11 @@ export default function App() {
       </main>
       <footer>
         <nav>
-          <button type="button">Reset</button>
+          {sudoku && (
+            <button type="button" onClick={() => setSudoku(null)}>
+              Reset
+            </button>
+          )}
         </nav>
       </footer>
     </div>
