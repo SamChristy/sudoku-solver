@@ -34,8 +34,6 @@ export default function SudokuScanner({ source, onFound }: Props) {
   }, [source]);
   const readDigits = useCallback(
     (images: SudokuDigitImages) => {
-      console.log('readDigits() 🔎');
-
       Promise.all(
         images.map(row =>
           Promise.all(row.map(digit => (digit ? reader.extractSingle(digit) : null)))
@@ -50,7 +48,6 @@ export default function SudokuScanner({ source, onFound }: Props) {
 
   useEffect(() => {
     if (!loadingStarted && !digitImages) {
-      console.log('<SudokuScanner />: start loading resources');
       SudokuScannerService.loadDependencies().then(() => {
         processStream();
         setScannerLoaded(true);
@@ -61,7 +58,6 @@ export default function SudokuScanner({ source, onFound }: Props) {
       });
       setLoadingStarted(true);
     } else if (digitImages && readerLoaded) readDigits(digitImages);
-    return () => console.log('unmount(<SudokuScanner />)');
   }, [digitImages, loadingStarted, processStream, readDigits, reader, readerLoaded]);
 
   return (

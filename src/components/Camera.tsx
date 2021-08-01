@@ -1,6 +1,6 @@
 import { forwardRef, MutableRefObject, useEffect } from 'react';
 
-import { onBack, onTabChange } from '../util/browser';
+// import { onBack, onTabChange } from '../util/browser';
 import { turnOffCamera, turnOnCamera } from '../util/camera';
 
 export enum CameraStatus {

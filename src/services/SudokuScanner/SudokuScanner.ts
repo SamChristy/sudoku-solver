@@ -80,7 +80,6 @@ export default class SudokuScanner implements SudokuScannerInterface {
 
   /** @inheritDoc */
   public extractDigits(): SudokuDigitImages | null {
-    console.log('extract digits 🔢');
     // If we didn't find a Sudoku, then we won't find any digits...
     if (this.processed === null) return null;
 
