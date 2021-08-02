@@ -17,7 +17,7 @@ export default class TextReader implements TextReaderInterface {
   protected readonly language = 'eng';
   protected readonly config: TextReaderConfig = {
     /** 2 threads seems a good compromise on mobile devices */
-    threadCount: 2, // TODO: Test multi-core tesseract performance on desktop (Node & browser)
+    threadCount: 2, // TODO: Dynamically determine optimal thread count.
     whiteList: '',
     single: false,
   };
