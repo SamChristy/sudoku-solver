@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { DigitReader, SudokuScanner as SudokuScannerService } from '../services';
+import { SudokuScanner as SudokuScannerService, TextReader } from '../services';
 import { SudokuDigitImages } from '../types/interfaces/SudokuScanner';
 import { Sudoku } from '../types/interfaces/SudokuSolver';
 import { getFrame } from '../util/camera';
@@ -15,7 +15,7 @@ export default function SudokuScanner({ source, onFound, scanHz = 30 }: Props) {
   const [readerLoaded, setReaderLoaded] = useState(false);
   const [digitImages, setDigitImages] = useState<SudokuDigitImages | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const reader = useMemo(() => new DigitReader(), []);
+  const digitReader = useMemo(() => new TextReader({ whiteList: '123456789', single: true }), []);
 
   /**
    * Continuously scan the source video, until a sudoku-like image is found.
@@ -46,9 +46,11 @@ export default function SudokuScanner({ source, onFound, scanHz = 30 }: Props) {
     () =>
       digitImages &&
       Promise.all(
-        digitImages.map(row => Promise.all(row.map(digit => (digit ? reader.read(digit) : null))))
+        digitImages.map(row =>
+          Promise.all(row.map(digit => (digit ? digitReader.read(digit) : '')))
+        )
       ).then(onFound),
-    [digitImages, onFound, reader]
+    [digitImages, onFound, digitReader]
   );
 
   useEffect(() => {
@@ -61,13 +63,13 @@ export default function SudokuScanner({ source, onFound, scanHz = 30 }: Props) {
         scanSource();
         setScannerLoaded(true);
       });
-      reader.load().then(() => {
+      digitReader.load().then(() => {
         readPendingDigits();
         setReaderLoaded(true);
       });
       setLoadingStarted(true);
     }
-  }, [loadingStarted, readPendingDigits, reader, scanSource]);
+  }, [loadingStarted, readPendingDigits, digitReader, scanSource]);
 
   useEffect(() => {
     if (readerLoaded) readPendingDigits();
@@ -78,9 +80,9 @@ export default function SudokuScanner({ source, onFound, scanHz = 30 }: Props) {
       // It's safer to call the destructor here, in case the component is unmounted before a sudoku
       // is found.
       // TODO: Move scanner and reader into global or parent state.
-      reader.destruct();
+      digitReader.destruct();
     },
-    [reader]
+    [digitReader]
   );
 
   return (

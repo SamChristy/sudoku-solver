@@ -1,1 +1,1 @@
-export type Sudoku = (number | null)[][];
+export type Sudoku = string[][];
