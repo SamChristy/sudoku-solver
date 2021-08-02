@@ -1,9 +1,9 @@
-type SudokuGrid = number[][];
+import SudokuSolverInterface, { Sudoku } from '../../types/interfaces/SudokuSolver';
 
-export default class SudokuSolver {
-  protected grid: SudokuGrid;
+export default class SudokuSolver implements SudokuSolverInterface {
+  protected grid: Sudoku;
 
-  constructor(grid: SudokuGrid) {
+  constructor(grid: Sudoku) {
     this.grid = grid;
   }
 
@@ -11,7 +11,7 @@ export default class SudokuSolver {
     return !!this.grid;
   }
 
-  public solve(): SudokuGrid {
+  public solve(): Sudoku {
     return this.grid;
   }
 }

@@ -1,4 +1,10 @@
-import SudokuScannerInterface, { SudokuScannerConfig } from '../../types/interfaces/SudokuScanner';
+import isNode from 'detect-node';
+
+import SudokuScannerInterface, {
+  SudokuDigitImages,
+  SudokuScannerConfig,
+} from '../../types/interfaces/SudokuScanner';
+import { loadScript } from '../../util/browser';
 import {
   cropAndFlatten,
   cropCellBorders,
@@ -73,7 +79,7 @@ export default class SudokuScanner implements SudokuScannerInterface {
   }
 
   /** @inheritDoc */
-  public extractDigits(): (HTMLCanvasElement | null)[][] | null {
+  public extractDigits(): SudokuDigitImages | null {
     // If we didn't find a Sudoku, then we won't find any digits...
     if (this.processed === null) return null;
 
@@ -183,5 +189,18 @@ export default class SudokuScanner implements SudokuScannerInterface {
     hierarchy.delete();
 
     return largestSquare;
+  }
+
+  /**
+   * Loads the Scanner's dependencies in a browser context (please note, this must be done manually
+   * if using node). This must be have resolved before the class is used.
+   *
+   * @param timeLimit The time, in ms, after which an Error will be thrown, if the dependencies have
+   *                  not loaded.
+   */
+  static async loadDependencies(timeLimit?: number): Promise<void> {
+    if (isNode || typeof cv !== 'undefined') return Promise.resolve();
+
+    return loadScript('opencv.js', timeLimit);
   }
 }

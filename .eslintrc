@@ -63,6 +63,8 @@
       {
         "exceptAfterSingleLine": true
       }
-    ]
+    ],
+    // We're not using defaultProps...
+    "react/require-default-props": "off"
   }
 }

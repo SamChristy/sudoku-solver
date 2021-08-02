@@ -43,7 +43,6 @@
     "jest-fail-on-console": "^2.0.4",
     "jest-image-snapshot": "^4.5.1",
     "node-sass": "^5.0.0",
-    "opencv-react": "0.0.5",
     "opencv4js": "^3.4.3",
     "prettier": "^2.2.1",
     "prettier-eslint": "^12.0.0",
@@ -68,8 +67,9 @@
     "workbox-streams": "^5.1.4"
   },
   "scripts": {
-    "start": "HTTPS=true react-scripts start",
-    "build": "react-scripts build",
+    "unpack-scripts": "rsync --checksum --ignore-times node_modules/opencv4js/opencv.js public/ && rsync node_modules/tesseract.js/dist/worker.min.js public/ocr && rsync node_modules/tesseract.js-core/tesseract-core.wasm.js public/ocr",
+    "start": "npm run unpack-scripts && HTTPS=true react-scripts start",
+    "build": "react-scripts build && npm run unpack-scripts",
     "test": "react-scripts test",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
