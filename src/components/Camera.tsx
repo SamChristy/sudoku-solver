@@ -2,6 +2,7 @@ import { forwardRef, MutableRefObject, useEffect } from 'react';
 
 // import { onBack, onTabChange } from '../util/browser';
 import { turnOffCamera, turnOnCamera } from '../util/camera';
+import styles from './Camera.module.scss';
 
 export enum CameraStatus {
   Loading,
@@ -21,7 +22,7 @@ const Camera = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Props, r
     // app's tab being minimised! 🙄 (This block will be auto-stripped from the actual build.)
     if (process.env.NODE_ENV !== 'production' && document.hidden) return () => {};
 
-    turnOnCamera(current, { width: 800, height: 800 }).catch(({ name }) =>
+    turnOnCamera(current).catch(({ name }) =>
       onStatusUpdate(name === 'NotAllowedError' ? CameraStatus.Denied : CameraStatus.Unavailable)
     );
 
@@ -44,6 +45,7 @@ const Camera = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Props, r
 
   return (
     <video
+      className={styles.camera}
       ref={ref}
       onLoadedMetadata={() => onStatusUpdate(CameraStatus.Active)}
       onSuspend={() => onStatusUpdate(CameraStatus.Unavailable)}

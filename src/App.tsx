@@ -14,22 +14,24 @@ export default function App() {
       <header>
         <h1>🧮 Sudoku Solver</h1>
       </header>
-      <main>
+      <div>
         <Camera ref={videoRef} onStatusUpdate={setCameraStatus} />
-        {cameraStatus === CameraStatus.Active && !sudoku && (
-          <SudokuScanner source={videoRef.current} scanHz={10} onFound={setSudoku} />
-        )}
-        {sudoku && <SudokuSolver sudoku={sudoku} />}
-      </main>
-      <footer>
-        <nav>
-          {sudoku && (
-            <button type="button" onClick={() => setSudoku(null)}>
-              Reset
-            </button>
+        <main>
+          {cameraStatus === CameraStatus.Active && !sudoku && (
+            <SudokuScanner source={videoRef.current} scanHz={10} onFound={setSudoku} />
           )}
-        </nav>
-      </footer>
+          {sudoku && <SudokuSolver sudoku={sudoku} />}
+        </main>
+        <footer>
+          <nav>
+            {sudoku && (
+              <button type="button" onClick={() => setSudoku(null)}>
+                Reset
+              </button>
+            )}
+          </nav>
+        </footer>
+      </div>
     </div>
   );
 }
