@@ -5,6 +5,7 @@ import {
   createWorker,
   ImageLike,
   PSM,
+  RecognizeResult,
   Scheduler,
   WorkerOptions,
   WorkerParams,
@@ -18,7 +19,7 @@ export default class TextReader implements TextReaderInterface {
   protected readonly config: TextReaderConfig = {
     /** 2 threads seems a good compromise on mobile devices */
     threadCount: 2, // TODO: Dynamically determine optimal thread count.
-    whiteList: '',
+    whitelist: '',
     single: false,
   };
 
@@ -46,10 +47,12 @@ export default class TextReader implements TextReaderInterface {
 
   /** @inheritDoc */
   public async read(imageSource: ImageLike): Promise<string> {
-    const { data } = await this.scheduler.addJob('recognize', imageSource);
+    const {
+      data: { text },
+    } = (await this.scheduler.addJob('recognize', imageSource)) as RecognizeResult;
 
-    // Precaution, as Tesseract sometimes returns multiple chars!
-    return this.config.single ? data.text.slice(0, 1) : data.text;
+    // Tesseract always appends a newline, and sometimes returns multiple chars in single-char mode!
+    return text.slice(0, this.config.single ? 1 : text.length - 1);
   }
 
   /** @inheritDoc */
@@ -62,10 +65,10 @@ export default class TextReader implements TextReaderInterface {
    */
   protected getTesseractConfig = () => {
     const tesseractConfig: Partial<WorkerParams> = {
-      tessedit_ocr_engine_mode: 2,
       user_defined_dpi: '300',
-      tessedit_pageseg_mode: '10' as PSM,
-      tessedit_char_whitelist: '123456789',
+      tessedit_ocr_engine_mode: 2,
+      tessedit_pageseg_mode: this.config.single ? ('10' as PSM) : undefined,
+      tessedit_char_whitelist: this.config.whitelist || undefined,
     };
 
     // Configure Tesseract worker to not make external download requests...

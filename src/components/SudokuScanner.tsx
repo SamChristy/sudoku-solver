@@ -15,7 +15,7 @@ export default function SudokuScanner({ source, onFound, scanHz = 30 }: Props) {
   const [readerLoaded, setReaderLoaded] = useState(false);
   const [digitImages, setDigitImages] = useState<SudokuDigitImages | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const digitReader = useMemo(() => new TextReader({ whiteList: '123456789', single: true }), []);
+  const digitReader = useMemo(() => new TextReader({ whitelist: '123456789', single: true }), []);
 
   /**
    * Continuously scan the source video, until a sudoku-like image is found.
