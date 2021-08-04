@@ -3,6 +3,7 @@ import { forwardRef, MutableRefObject, useEffect } from 'react';
 // import { onBack, onTabChange } from '../util/browser';
 import { turnOffCamera, turnOnCamera } from '../util/camera';
 import styles from './Camera.module.scss';
+import Overlay from './Overlay';
 
 export enum CameraStatus {
   Loading,
@@ -44,14 +45,17 @@ const Camera = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Props, r
   }, [onStatusUpdate, ref]);
 
   return (
-    <video
-      className={styles.camera}
-      ref={ref}
-      onLoadedMetadata={() => onStatusUpdate(CameraStatus.Active)}
-      onSuspend={() => onStatusUpdate(CameraStatus.Unavailable)}
-      playsInline
-      muted
-    />
+    <>
+      <video
+        className={styles.camera}
+        ref={ref}
+        onLoadedMetadata={() => onStatusUpdate(CameraStatus.Active)}
+        onSuspend={() => onStatusUpdate(CameraStatus.Unavailable)}
+        playsInline
+        muted
+      />
+      <Overlay />
+    </>
   );
 });
 

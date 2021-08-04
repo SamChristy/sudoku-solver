@@ -1,4 +1,5 @@
 $headerHeight: 5rem;
+$windowSize: 75vw;
 
 .app {
   display: grid;
@@ -26,16 +27,27 @@ $headerHeight: 5rem;
     height: 100%;
     min-height: 100%;
     display: grid;
-    grid-template-columns: 100%;
-    grid-template-rows: 25% 50% 25%;
+    grid-template-columns: 1fr $windowSize 1fr;
+    grid-template-rows: 1fr $windowSize 1fr;
     place-items: center;
     position: relative;
+
+    > main {
+      grid-row: 2/3;
+      grid-column: 2/3;
+      width: 100%;
+      height: 100%;
+    }
   }
 
   @media (orientation: landscape) {
+    & {
+      $landscapeHeaderHeight: 0.75 * $headerHeight;
+      grid-template-rows: $landscapeHeaderHeight calc(100% - #{$landscapeHeaderHeight});
+    }
     > div {
-      grid-template-columns: 25% 50% 25%;
-      grid-template-rows: 100%;
+      grid-template-columns: 1fr 66.7vh 1fr;
+      grid-template-rows: 1fr 67.7vh 1fr;
     }
   }
 }
