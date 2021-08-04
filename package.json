@@ -23,6 +23,7 @@
     "@typescript-eslint/parser": "^4.17.0",
     "babel-eslint": "^10.1.0",
     "canvas": "^2.8.0",
+    "detect-browser": "^5.2.0",
     "detect-node": "^2.1.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-airbnb-typescript": "^12.3.1",
