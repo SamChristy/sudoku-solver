@@ -13,7 +13,7 @@ $systemFonts: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 
 h1,
 h2,
 h3 {
-  font-family: 'Dancing Script', $systemFonts;
+  font-family: 'Dancing Script', 'Brush Script MT', cursive, $systemFonts;
 }
 
 html,
