@@ -41,6 +41,7 @@
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "eslint-plugin-testing-library": "^3.10.2",
     "gh-pages": "^3.2.3",
+    "jest-extended": "^0.11.5",
     "jest-fail-on-console": "^2.0.4",
     "jest-image-snapshot": "^4.5.1",
     "node-sass": "^5.0.0",
