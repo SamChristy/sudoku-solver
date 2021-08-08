@@ -4,12 +4,8 @@ $borderThin: calc(#{$height} / 1000) solid black;
 $borderThick: calc(#{$height} / 125) solid black;
 
 .sudokuSolver {
-  width: $width;
-  height: $height;
-  box-sizing: border-box;
+  background: white;
   margin: 0 auto;
-  margin-top: calc((100vw - #{$height}) / 2);
-  margin-bottom: calc((100vw - #{$height}) / 2);
   font-size: calc(#{$height} / 12);
   font-weight: 700;
   border-collapse: collapse;

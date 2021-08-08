@@ -3,7 +3,6 @@ $cornerWidth: 0.333em;
 $cornerBorder: $cornerWidth solid #a60000;
 
 .overlay {
-  z-index: 1;
   grid-row: 2/3;
   grid-column: 2/3;
   position: relative;

@@ -18,7 +18,7 @@ export default function App() {
         <Camera ref={videoRef} onStatusUpdate={setCameraStatus} />
         <main>
           {cameraStatus === CameraStatus.Active && !sudoku && (
-            <SudokuScanner source={videoRef.current} scanHz={10} onFound={setSudoku} />
+            <SudokuScanner source={videoRef} scanHz={10} onFound={setSudoku} />
           )}
           {sudoku && <SudokuSolver sudoku={sudoku} />}
         </main>
