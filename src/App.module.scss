@@ -1,5 +1,7 @@
 $headerHeight: 5rem;
 $windowSize: 75vw;
+$landscapeHeaderHeight: 0.75 * $headerHeight;
+$landscapeWindowSize: 66.7vh;
 
 .app {
   display: grid;
@@ -42,12 +44,11 @@ $windowSize: 75vw;
 
   @media (orientation: landscape) {
     & {
-      $landscapeHeaderHeight: 0.75 * $headerHeight;
       grid-template-rows: $landscapeHeaderHeight calc(100% - #{$landscapeHeaderHeight});
     }
     > div {
-      grid-template-columns: 1fr 66.7vh 1fr;
-      grid-template-rows: 1fr 67.7vh 1fr;
+      grid-template-columns: 1fr $landscapeWindowSize 1fr;
+      grid-template-rows: 1fr $landscapeWindowSize 1fr;
     }
   }
 }
