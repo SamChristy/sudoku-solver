@@ -1,7 +1,6 @@
 import { RefObject, useEffect, useRef } from 'react';
 
-import useReader from '../hooks/useReader';
-import useScanner from '../hooks/useScanner';
+import { useReader, useScanner } from '../hooks';
 import { Sudoku } from '../types/interfaces/SudokuSolver';
 import styles from './SudokuScanner.module.scss';
 
