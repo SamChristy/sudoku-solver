@@ -4,8 +4,10 @@ import { TextReader } from '../services';
 import { SudokuDigitImages } from '../types/interfaces/SudokuScanner';
 import { Sudoku } from '../types/interfaces/SudokuSolver';
 
-export default function useReader(digitImages: SudokuDigitImages | null): [boolean, Sudoku | null] {
-  const [readerLoaded, setReaderLoaded] = useState(false);
+export default function useReader(
+  digitImages: SudokuDigitImages | null
+): [boolean | null, Sudoku | null] {
+  const [readerLoaded, setReaderLoaded] = useState<boolean | null>(null);
   const [sudoku, setSudoku] = useState<Sudoku | null>(null);
   const digitReader = useMemo(() => new TextReader({ whitelist: '123456789', single: true }), []);
 
@@ -25,12 +27,13 @@ export default function useReader(digitImages: SudokuDigitImages | null): [boole
   );
 
   useEffect(() => {
-    !digitImages &&
-      !readerLoaded &&
+    if (readerLoaded === null) {
       digitReader.load().then(() => {
         readPendingDigits();
         setReaderLoaded(true);
       });
+      setReaderLoaded(false);
+    }
     readerLoaded && readPendingDigits();
   }, [digitImages, digitReader, readPendingDigits, readerLoaded]);
 

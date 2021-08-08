@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { RefObject, useEffect, useRef } from 'react';
 
 import useReader from '../hooks/useReader';
 import useScanner from '../hooks/useScanner';
 import { Sudoku } from '../types/interfaces/SudokuSolver';
+import styles from './SudokuScanner.module.scss';
 
 /**
  * Visual UI, designed to be rendered on top of the <video> element that is its source. The video
@@ -10,7 +11,7 @@ import { Sudoku } from '../types/interfaces/SudokuSolver';
  */
 export default function SudokuScanner({ source, onFound, scanHz }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [scannerLoaded, digitImages] = useScanner(source, canvasRef.current, scanHz);
+  const [scannerLoaded, digitImages] = useScanner(source, canvasRef, scanHz);
   const [readerLoaded, sudoku] = useReader(digitImages);
 
   useEffect(() => {
@@ -22,7 +23,7 @@ export default function SudokuScanner({ source, onFound, scanHz }: Props) {
   // fast as possible for the user; so we proceed as far as we can at each step, before hitting a
   // roadblock (where we are forced to display a "this library is loading..." message).
   return (
-    <div>
+    <div className={styles.sudokuScanner}>
       {!scannerLoaded && 'Please wait while the scanner loads...'}
       {digitImages && !readerLoaded && 'Please wait while the reader loads...'}
       <canvas ref={canvasRef} />
@@ -30,4 +31,8 @@ export default function SudokuScanner({ source, onFound, scanHz }: Props) {
   );
 }
 
-type Props = { source: HTMLVideoElement | null; onFound(sudoku: Sudoku): void; scanHz?: number };
+type Props = {
+  source: RefObject<HTMLVideoElement>;
+  onFound(sudoku: Sudoku): void;
+  scanHz?: number;
+};
