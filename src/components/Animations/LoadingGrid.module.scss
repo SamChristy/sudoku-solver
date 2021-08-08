@@ -1,0 +1,111 @@
+// Generated using https://icons8.com/cssload/en/horizontal-bars/3
+// Credit goes to https://codepen.io/brandonkennedy
+.loadingGrid {
+  height: 30px;
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%) translateY(-50%);
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  width: 30px;
+
+  > span {
+    background: rgb(166, 0, 0);
+    display: block;
+    height: 6px;
+    opacity: 0;
+    position: absolute;
+    width: 6px;
+    animation: load 2.6s ease-in-out infinite;
+    -webkit-animation: load 2.6s ease-in-out infinite;
+
+    &.block1 {
+      animation-delay: 0.596s;
+      -webkit-animation-delay: 0.596s;
+      left: 0;
+      top: 0;
+    }
+
+    &.block2 {
+      animation-delay: 0.542s;
+      -webkit-animation-delay: 0.542s;
+      left: 8px;
+      top: 0;
+    }
+
+    &.block3 {
+      animation-delay: 0.498s;
+      -webkit-animation-delay: 0.498s;
+      left: 16px;
+      top: 0;
+    }
+
+    &.block4 {
+      animation-delay: 0.39s;
+      -webkit-animation-delay: 0.39s;
+      left: 0;
+      top: 8px;
+    }
+
+    &.block5 {
+      animation-delay: 0.336s;
+      -webkit-animation-delay: 0.336s;
+      left: 8px;
+      top: 8px;
+    }
+
+    &.block6 {
+      animation-delay: 0.282s;
+      -webkit-animation-delay: 0.282s;
+      left: 16px;
+      top: 8px;
+    }
+
+    &.block7 {
+      animation-delay: 0.184s;
+      -webkit-animation-delay: 0.184s;
+      left: 0;
+      top: 16px;
+    }
+
+    &.block8 {
+      animation-delay: 0.13s;
+      -webkit-animation-delay: 0.13s;
+      left: 8px;
+      top: 16px;
+    }
+
+    &.block9 {
+      animation-delay: 0.076s;
+      -webkit-animation-delay: 0.076s;
+      left: 16px;
+      top: 16px;
+    }
+  }
+
+  @keyframes load {
+    0% {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    15% {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    30% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    70% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    85% {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+  }
+}

@@ -11,9 +11,12 @@ $cornerBorder: $cornerWidth solid #a60000;
   box-shadow: 0 0 0 500vw rgba(128, 128, 128, 0.5);
 
   .corner {
+    z-index: 2;
     position: absolute;
     width: $cornerSize;
     height: $cornerSize;
+
+    @include slightlyRoundedEdge;
 
     &.top {
       top: 0;
