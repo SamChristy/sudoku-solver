@@ -1,10 +1,12 @@
+@import '../App.module';
+
 $width: 85vw;
 $height: $width;
-$borderThin: calc(#{$height} / 1000) solid black;
-$borderThick: calc(#{$height} / 125) solid black;
+$borderThin: calc(#{$height} / 1000) solid $colour1;
+$borderThick: calc(#{$height} / 125) solid $colour1;
 
 .sudokuSolver {
-  background: white;
+  background: $colour2;
   margin: 0 auto;
   font-size: calc(#{$height} / 12);
   font-weight: 700;

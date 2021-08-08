@@ -1,6 +1,8 @@
+@import '../App.module';
+
 $cornerSize: 1.677em;
 $cornerWidth: 0.333em;
-$cornerBorder: $cornerWidth solid #a60000;
+$cornerBorder: $cornerWidth solid $colour3;
 
 .overlay {
   grid-row: 2/3;

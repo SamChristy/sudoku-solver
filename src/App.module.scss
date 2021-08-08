@@ -1,3 +1,6 @@
+$colour1: black;
+$colour2: white;
+$colour3: #a60000;
 $headerHeight: 5rem;
 $windowSize: 75vw;
 $landscapeHeaderHeight: 0.75 * $headerHeight;
@@ -18,7 +21,7 @@ $landscapeWindowSize: 66.7vh;
     display: grid;
     align-items: center;
     height: 100%;
-    background: white;
+    background: $colour2;
 
     h1 {
       text-align: center;

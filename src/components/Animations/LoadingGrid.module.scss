@@ -1,3 +1,5 @@
+@import '../../App.module';
+
 // Generated using https://icons8.com/cssload/en/horizontal-bars/3
 // Credit goes to https://codepen.io/brandonkennedy
 .loadingGrid {
@@ -9,7 +11,7 @@
   width: 30px;
 
   > span {
-    background: rgb(166, 0, 0);
+    background: $colour3;
     display: block;
     height: 6px;
     opacity: 0;
