@@ -14,7 +14,7 @@ $borderThick: calc(#{$height} / 125) solid $colour1;
   table-layout: fixed;
   border: $borderThick;
 
-  @include slightlyRoundedEdge;
+  @include softenedEdges;
 
   td {
     border: $borderThin;

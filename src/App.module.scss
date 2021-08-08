@@ -6,7 +6,7 @@ $windowSize: 75vw;
 $landscapeHeaderHeight: 0.75 * $headerHeight;
 $landscapeWindowSize: 66.7vh;
 
-@mixin slightlyRoundedEdge {
+@mixin softenedEdges {
   border-radius: 0.2rem;
 }
 

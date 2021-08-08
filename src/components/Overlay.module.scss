@@ -13,27 +13,43 @@ $cornerBorder: $cornerWidth solid $colour3;
   box-shadow: 0 0 0 500vw rgba(128, 128, 128, 0.5);
 
   .corner {
+    @include softenedEdges;
+
     z-index: 2;
     position: absolute;
     width: $cornerSize;
     height: $cornerSize;
 
-    @include slightlyRoundedEdge;
-
     &.top {
       top: 0;
       margin-top: calc(#{-$cornerWidth / 2});
       border-top: $cornerBorder;
-    }
-    &.right {
-      right: 0;
-      margin-right: calc(#{-$cornerWidth / 2});
-      border-right: $cornerBorder;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      &.left {
+        border-top-right-radius: 0;
+      }
+      &.right {
+        border-top-left-radius: 0;
+      }
     }
     &.bottom {
       bottom: 0;
       margin-bottom: calc(#{-$cornerWidth / 2});
       border-bottom: $cornerBorder;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      &.left {
+        border-bottom-right-radius: 0;
+      }
+      &.right {
+        border-bottom-left-radius: 0;
+      }
+    }
+    &.right {
+      right: 0;
+      margin-right: calc(#{-$cornerWidth / 2});
+      border-right: $cornerBorder;
     }
     &.left {
       left: 0;
