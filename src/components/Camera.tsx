@@ -45,17 +45,14 @@ const Camera = forwardRef<HTMLVideoElement, Props>(({ onStatusUpdate }: Props, r
   }, [onStatusUpdate, ref]);
 
   return (
-    <>
-      <video
-        className={styles.camera}
-        ref={ref}
-        onLoadedMetadata={() => onStatusUpdate(CameraStatus.Active)}
-        onSuspend={() => onStatusUpdate(CameraStatus.Unavailable)}
-        playsInline
-        muted
-      />
-      <Overlay />
-    </>
+    <video
+      className={styles.camera}
+      ref={ref}
+      onLoadedMetadata={() => onStatusUpdate(CameraStatus.Active)}
+      onSuspend={() => onStatusUpdate(CameraStatus.Unavailable)}
+      playsInline
+      muted
+    />
   );
 });
 

@@ -4,10 +4,6 @@
 // Credit goes to https://codepen.io/brandonkennedy
 .loadingGrid {
   height: 30px;
-  left: 50%;
-  position: absolute;
-  transform: translateX(-50%) translateY(-50%);
-  -webkit-transform: translateX(-50%) translateY(-50%);
   width: 30px;
 
   > span {

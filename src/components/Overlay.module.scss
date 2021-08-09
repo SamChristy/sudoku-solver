@@ -15,7 +15,6 @@ $cornerBorder: $cornerWidth solid $colour3;
   .corner {
     @include softenedEdges;
 
-    z-index: 2;
     position: absolute;
     width: $cornerSize;
     height: $cornerSize;

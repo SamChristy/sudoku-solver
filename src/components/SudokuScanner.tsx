@@ -3,6 +3,7 @@ import { RefObject, useEffect, useRef } from 'react';
 import { useReader, useScanner } from '../hooks';
 import { Sudoku } from '../types/interfaces/SudokuSolver';
 import LoadingGrid from './Animations/LoadingGrid';
+import Overlay from './Overlay';
 import styles from './SudokuScanner.module.scss';
 
 /**
@@ -24,13 +25,19 @@ export default function SudokuScanner({ source, onFound, scanHz }: Props) {
   // roadblock (where we are forced to display a "this library is loading..." message).
   return (
     <div className={styles.sudokuScanner}>
-      {!scannerLoaded && (
-        <span>
-          <LoadingGrid /> Please wait while the scanner loads...
-        </span>
-      )}
-      {digitImages && !readerLoaded && <span>Please wait while the reader loads...</span>}
       <canvas ref={canvasRef} />
+      {!scannerLoaded && (
+        <div className={styles.loadingMessage}>
+          <LoadingGrid /> <span>Please wait while the scanner loads...</span>
+        </div>
+      )}
+      {digitImages && !readerLoaded && (
+        <div className={styles.loadingMessage}>
+          <LoadingGrid />
+          Please wait while the reader loads...
+        </div>
+      )}
+      {!sudoku && <Overlay />}
     </div>
   );
 }
