@@ -1,14 +1,12 @@
 @import '../App.module';
 
-$width: 85vw;
-$height: $width;
-$borderThin: calc(#{$height} / 1000) solid $colour1;
-$borderThick: calc(#{$height} / 125) solid $colour1;
+$borderThin: calc(0.1vw) solid $colour1;
+$borderThick: calc(0.6vw) solid $colour1;
 
 .sudokuSolver {
   background: $colour2;
   margin: 0 auto;
-  font-size: calc(#{$height} / 12);
+  font-size: calc(6.25vw);
   font-weight: 700;
   border-collapse: collapse;
   table-layout: fixed;

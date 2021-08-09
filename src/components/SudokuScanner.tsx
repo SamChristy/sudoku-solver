@@ -15,6 +15,10 @@ export default function SudokuScanner({ source, onFound, scanHz }: Props) {
   const [scannerLoaded, digitImages] = useScanner(source, canvasRef, scanHz);
   const [readerLoaded, sudoku] = useReader(digitImages);
 
+  let loadingMessage = '';
+  if (!scannerLoaded) loadingMessage = 'Please wait while the scanner loads...';
+  else if (digitImages && !readerLoaded) loadingMessage = 'Please wait while the reader loads...';
+
   useEffect(() => {
     sudoku && onFound(sudoku);
   }, [onFound, sudoku]);
@@ -26,15 +30,10 @@ export default function SudokuScanner({ source, onFound, scanHz }: Props) {
   return (
     <div className={styles.sudokuScanner}>
       <canvas ref={canvasRef} />
-      {!scannerLoaded && (
-        <div className={styles.loadingMessage}>
-          <LoadingGrid /> <span>Please wait while the scanner loads...</span>
-        </div>
-      )}
-      {digitImages && !readerLoaded && (
+      {loadingMessage && (
         <div className={styles.loadingMessage}>
           <LoadingGrid />
-          Please wait while the reader loads...
+          <span>{loadingMessage}</span>
         </div>
       )}
       {!sudoku && <Overlay />}

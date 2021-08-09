@@ -3,7 +3,6 @@ import { forwardRef, MutableRefObject, useEffect } from 'react';
 // import { onBack, onTabChange } from '../util/browser';
 import { turnOffCamera, turnOnCamera } from '../util/camera';
 import styles from './Camera.module.scss';
-import Overlay from './Overlay';
 
 export enum CameraStatus {
   Loading,
