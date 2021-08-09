@@ -34,7 +34,9 @@ export default function useScanner(
   useEffect(() => {
     if (scannerLoaded === null) {
       SudokuScannerService.loadDependencies().then(() => {
-        scanSource();
+        // Prevent blocking the main thread for too long, so the browser doesn't think we're mining
+        // bitcoin! 😆
+        setTimeout(scanSource, 100);
         setScannerLoaded(true);
       });
       setScannerLoaded(false);

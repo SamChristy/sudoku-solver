@@ -11,6 +11,7 @@ export const browser = detect();
  */
 export const loadScript = async (url: string, timeout = 10000): Promise<void> => {
   const script = document.createElement('script');
+  script.defer = true;
 
   if (url.startsWith('http')) script.src = url;
   else if (url.startsWith('/')) script.src = `${process.env.PUBLIC_URL}${url}`;
