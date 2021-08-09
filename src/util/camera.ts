@@ -52,17 +52,6 @@ export const turnOnCamera = async (videoElement: HTMLVideoElement, dimensions?: 
   await videoElement.play();
 };
 
-export const getFrame = (video: HTMLVideoElement): ImageData | null => {
-  const buffer = document.createElement('canvas');
-  buffer.width = video.videoWidth;
-  buffer.height = video.videoHeight;
-  const ctx = buffer.getContext('2d');
-  if (!ctx) return null;
-
-  ctx.drawImage(video, 0, 0);
-  return ctx.getImageData(0, 0, buffer.width, buffer.height);
-};
-
 /**
  * Ends any streams associated with the <video />, so that the user's camera light turns off.
  */
