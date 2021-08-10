@@ -1,12 +1,12 @@
 @import '../App.module';
 
-$borderThin: calc(0.1vw) solid $colour1;
-$borderThick: calc(0.6vw) solid $colour1;
+$borderThin: 0.05em solid $colour1;
+$borderThick: 0.12em solid $colour1;
 
 .sudokuSolver {
   background: $colour2;
   margin: 0 auto;
-  font-size: calc(6.25vw);
+  font-size: 6.25vw;
   font-weight: 700;
   border-collapse: collapse;
   table-layout: fixed;
@@ -30,5 +30,11 @@ $borderThick: calc(0.6vw) solid $colour1;
   }
   td:nth-child(3n) {
     border-right: $borderThick;
+  }
+
+  @media (orientation: landscape) {
+    & {
+      font-size: 5vh;
+    }
   }
 }
