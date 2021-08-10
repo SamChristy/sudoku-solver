@@ -7,7 +7,8 @@ $cornerBorder: $cornerWidth solid $colour3;
 .overlay {
   grid-row: 2/3;
   grid-column: 2/3;
-  position: relative;
+  position: absolute;
+  top: 0;
   width: 100%;
   height: 100%;
   box-shadow: 0 0 0 500vw rgba(128, 128, 128, 0.5);

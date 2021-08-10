@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 
 import styles from './App.module.scss';
-import { Camera, CameraStatus, SudokuScanner, SudokuSolver } from './components';
+import { Camera, CameraStatus, Overlay, SudokuScanner, SudokuSolver } from './components';
 import { Sudoku } from './types/interfaces/SudokuSolver';
 
 export default function App() {
@@ -21,6 +21,7 @@ export default function App() {
             <SudokuScanner source={videoRef} scanHz={10} onFound={setSudoku} />
           )}
           {sudoku && <SudokuSolver sudoku={sudoku} />}
+          <Overlay corners={!sudoku} />
         </main>
         <footer>
           <nav>

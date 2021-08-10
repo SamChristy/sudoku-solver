@@ -3,7 +3,6 @@ import { RefObject, useEffect, useRef } from 'react';
 import { useReader, useScanner } from '../hooks';
 import { Sudoku } from '../types/interfaces/SudokuSolver';
 import LoadingGrid from './Animations/LoadingGrid';
-import Overlay from './Overlay';
 import styles from './SudokuScanner.module.scss';
 
 /**
@@ -36,7 +35,6 @@ export default function SudokuScanner({ source, onFound, scanHz }: Props) {
           <span>{loadingMessage}</span>
         </div>
       )}
-      {!sudoku && <Overlay />}
     </div>
   );
 }
