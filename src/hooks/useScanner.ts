@@ -4,7 +4,13 @@ import { RefObject, useCallback, useEffect, useState } from 'react';
 import { SudokuScanner as SudokuScannerService } from '../services';
 import { SudokuDigitImages } from '../types/interfaces/SudokuScanner';
 
-const getFrame = (video: HTMLVideoElement, mask: HTMLCanvasElement): ImageData | null => {
+// This results in an optimal character height for OCR, see:  https://groups.google.com/g/tesseract-ocr/c/Wdh_JJwnw94/m/24JHDYQbBQAJ
+const SUDOKU_SIZE = 540;
+const buffer = document.createElement('canvas');
+buffer.width = SUDOKU_SIZE;
+buffer.height = SUDOKU_SIZE;
+
+const getFrame = (video: HTMLVideoElement, mask: HTMLElement): ImageData | null => {
   const { width: displayWidth, height: displayHeight } = video.getBoundingClientRect();
   const { width: scaledWidth, height: scaledHeight, x: cropX, y: cropY } = cover(
     displayWidth,
@@ -20,15 +26,6 @@ const getFrame = (video: HTMLVideoElement, mask: HTMLCanvasElement): ImageData |
     height: scale * mask.offsetHeight,
   };
 
-  // console.log(scale);
-  // console.log(width, height);
-  // console.log(video.videoWidth, video.videoHeight);
-  // console.log(cover(displayWidth, displayHeight, video.videoWidth, video.videoHeight));
-  console.log(videoMask);
-
-  const buffer = mask;
-  buffer.width = videoMask.width;
-  buffer.height = videoMask.height;
   const ctx = buffer.getContext('2d');
   if (!ctx) return null;
 
@@ -71,7 +68,7 @@ export default function useScanner(
     }
 
     const timeTaken = Date.now() - start;
-    !found && window.setTimeout(scanSource, 1000 / scanHz - timeTaken);
+    !found && setTimeout(scanSource, 1000 / scanHz - timeTaken);
   }, [output, scanHz, source]);
 
   useEffect(() => {
