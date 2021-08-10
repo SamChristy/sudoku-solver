@@ -2,7 +2,7 @@ import { RefObject, useEffect, useRef } from 'react';
 
 import { useReader, useScanner } from '../hooks';
 import { Sudoku } from '../types/interfaces/SudokuSolver';
-import LoadingGrid from './Animations/LoadingGrid';
+import { Ellipsis, LoadingGrid } from './Animations';
 import styles from './SudokuScanner.module.scss';
 
 /**
@@ -15,8 +15,8 @@ export default function SudokuScanner({ source, onFound, scanHz }: Props) {
   const [readerLoaded, sudoku] = useReader(digitImages);
 
   let loadingMessage = '';
-  if (!scannerLoaded) loadingMessage = 'Please wait while the scanner loads...';
-  else if (digitImages && !readerLoaded) loadingMessage = 'Please wait while the reader loads...';
+  if (!scannerLoaded) loadingMessage = 'Please wait while the scanner loads';
+  else if (digitImages && !readerLoaded) loadingMessage = 'Please wait while the reader loads';
 
   useEffect(() => {
     sudoku && onFound(sudoku);
@@ -32,7 +32,10 @@ export default function SudokuScanner({ source, onFound, scanHz }: Props) {
       {loadingMessage && (
         <div className={styles.loadingMessage}>
           <LoadingGrid />
-          <span>{loadingMessage}</span>
+          <span>
+            {loadingMessage}
+            <Ellipsis />
+          </span>
         </div>
       )}
     </div>
