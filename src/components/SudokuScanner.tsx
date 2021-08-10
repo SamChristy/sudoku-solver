@@ -2,7 +2,7 @@ import { RefObject, useEffect, useRef } from 'react';
 
 import { useReader, useScanner } from '../hooks';
 import { Sudoku } from '../types/interfaces/SudokuSolver';
-import { Ellipsis, LoadingGrid } from './Animations';
+import { Ellipsis, LoadingBlocks } from './Animations';
 import styles from './SudokuScanner.module.scss';
 
 /**
@@ -31,7 +31,7 @@ export default function SudokuScanner({ source, onFound, scanHz }: Props) {
       <canvas ref={canvasRef} />
       {loadingMessage && (
         <div className={styles.loadingMessage}>
-          <LoadingGrid />
+          <LoadingBlocks />
           <span>
             {loadingMessage}
             <Ellipsis />

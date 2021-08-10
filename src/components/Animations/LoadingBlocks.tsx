@@ -1,8 +1,8 @@
-import styles from './LoadingGrid.module.scss';
+import styles from './LoadingBlocks.module.scss';
 
-export default function LoadingGrid() {
+export default function LoadingBlocks() {
   return (
-    <div className={styles.loadingGrid}>
+    <div className={styles.loadingBlocks}>
       <span className={styles.block1} />
       <span className={styles.block2} />
       <span className={styles.block3} />
