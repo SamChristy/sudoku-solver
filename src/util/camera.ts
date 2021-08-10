@@ -7,8 +7,8 @@ interface Resolution {
  * Used for getting the best-possible camera and configuration from `MediaDevices.getUserMedia()`.
  */
 const idealCameraConstraints = {
-  width: { ideal: 4096 },
-  height: { ideal: 2160 },
+  width: { ideal: 2048 },
+  height: { ideal: 1080 },
   facingMode: { ideal: 'environment' },
   focusMode: { ideal: 'continuous' },
   whiteBalance: { ideal: 'continuous' },
