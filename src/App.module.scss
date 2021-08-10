@@ -2,7 +2,7 @@ $colour1: black;
 $colour2: white;
 $colour3: #a60000;
 $headerHeight: 5rem;
-$windowSize: 75vw;
+$windowSize: 84vw;
 $landscapeHeaderHeight: 0.75 * $headerHeight;
 $landscapeWindowSize: 66.7vh;
 
@@ -35,7 +35,9 @@ $landscapeWindowSize: 66.7vh;
     height: 100%;
     min-height: 100%;
     display: grid;
-    grid-template-columns: 1fr $windowSize 1fr;
+    grid-template-columns: calc(#{(100 - $windowSize) / 2}) $windowSize calc(
+        #{(100 - $windowSize) / 2}
+      );
     grid-template-rows: 1fr $windowSize 1fr;
     place-items: center;
     position: relative;
