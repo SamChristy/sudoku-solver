@@ -44,34 +44,6 @@ export const loadMobileConsole = async (): Promise<void> => {
   eruda.init();
 };
 
-type EventHandler = () => void;
-type TabChangeHandlers = { opened: EventHandler; closed: EventHandler };
-type CleanUpFunction = () => void;
-
-/**
- * @param opened Function to run when the browser tab/window is reopened.
- * @param closed Function to run when the browser tab/window is closed.
- * @return Cleanup function, to remove the event handler.
- */
-export const onTabChange = ({ opened, closed }: TabChangeHandlers): CleanUpFunction => {
-  const handler = () => (document.hidden ? closed() : opened());
-  document.addEventListener('visibilitychange', handler);
-
-  return () => document.removeEventListener('visibilitychange', handler);
-};
-
-/**
- * Runs the supplied function when the user navigates back to the site.
- *
- * @return Cleanup function, to remove the event handler.
- */
-export const onBack = (eventHandler: EventHandler): CleanUpFunction => {
-  const handler = (event: PageTransitionEvent) => event.persisted && eventHandler();
-  window.addEventListener('pageshow', handler, false);
-
-  return () => window.removeEventListener('pageshow', handler);
-};
-
 /**
  * @see https://bugs.webkit.org/show_bug.cgi?id=141832
  */
