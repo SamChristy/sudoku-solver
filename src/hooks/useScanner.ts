@@ -20,8 +20,8 @@ const getFrame = (video: HTMLVideoElement, mask: HTMLElement): ImageData | null 
   );
   const scale = cropX ? video.videoHeight / scaledHeight : video.videoWidth / scaledWidth;
   const videoMask = {
-    x: scale * (mask.offsetLeft - cropX),
-    y: scale * (mask.offsetTop - cropY),
+    x: scale * (mask.offsetLeft - video.offsetLeft - cropX),
+    y: scale * (mask.offsetTop - video.offsetTop - cropY),
     width: scale * mask.offsetWidth,
     height: scale * mask.offsetHeight,
   };

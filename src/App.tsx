@@ -14,25 +14,23 @@ export default function App() {
       <header>
         <h1>🧮 Sudoku Solver</h1>
       </header>
-      <div>
-        <Camera ref={videoRef} onStatusUpdate={setCameraStatus} />
-        <main>
-          {cameraStatus === CameraStatus.Active && !sudoku && (
-            <SudokuScanner source={videoRef} scanHz={10} onFound={setSudoku} />
+      <Camera ref={videoRef} onStatusUpdate={setCameraStatus} />
+      <main>
+        {cameraStatus === CameraStatus.Active && !sudoku && (
+          <SudokuScanner source={videoRef} scanHz={10} onFound={setSudoku} />
+        )}
+        {sudoku && <SudokuSolver sudoku={sudoku} />}
+        <Overlay corners={!sudoku} />
+      </main>
+      <footer>
+        <nav>
+          {sudoku && (
+            <button type="button" onClick={() => setSudoku(null)}>
+              Reset
+            </button>
           )}
-          {sudoku && <SudokuSolver sudoku={sudoku} />}
-          <Overlay corners={!sudoku} />
-        </main>
-        <footer>
-          <nav>
-            {sudoku && (
-              <button type="button" onClick={() => setSudoku(null)}>
-                Reset
-              </button>
-            )}
-          </nav>
-        </footer>
-      </div>
+        </nav>
+      </footer>
     </div>
   );
 }
