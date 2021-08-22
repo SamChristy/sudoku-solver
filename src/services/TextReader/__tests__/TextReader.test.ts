@@ -30,4 +30,4 @@ it('reads single char in image', async () => {
 
   reader.destruct();
   expect(digit).toEqual('7');
-});
+}, 10000);
