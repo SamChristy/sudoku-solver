@@ -9,7 +9,8 @@
 
 @mixin ellipsisAnimation {
   opacity: 0;
-  animation: ellipsis 1s infinite;
+  animation-delay: 1s;
+  animation: ellipsis 1.3s infinite;
   animation-timing-function: steps(2, end);
 }
 
