@@ -56,6 +56,19 @@ $landscapeWindowSize: 66.7vh;
       padding: 0;
     }
   }
+  > footer {
+    z-index: 1;
+    grid-row: 4/5;
+    grid-column: 1/-1;
+
+    display: grid;
+    place-content: center;
+
+    button {
+      font-size: 1.33em;
+      padding: 0.5em 1em;
+    }
+  }
 
   @media (orientation: landscape) {
     & {
