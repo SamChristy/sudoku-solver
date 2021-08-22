@@ -1,0 +1,27 @@
+@keyframes ellipsis {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@mixin ellipsisAnimation {
+  opacity: 0;
+  animation-delay: 1s;
+  animation: ellipsis 1.3s infinite;
+  animation-timing-function: steps(2, end);
+}
+
+.one {
+  @include ellipsisAnimation;
+}
+.two {
+  @include ellipsisAnimation;
+  animation-delay: 0.2s;
+}
+.three {
+  @include ellipsisAnimation;
+  animation-delay: 0.4s;
+}

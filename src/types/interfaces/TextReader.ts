@@ -2,7 +2,7 @@ import { ImageLike } from 'tesseract.js';
 
 export type TextReaderConfig = {
   threadCount: number;
-  whiteList: string;
+  whitelist: string;
   single: boolean;
 };
 

@@ -1,17 +1,79 @@
+$colour1: black;
+$colour2: white;
+$colour3: #a60000;
+$headerHeight: 5rem;
+$windowSize: 84vw;
+$landscapeHeaderHeight: 0.75 * $headerHeight;
+$landscapeWindowSize: 66.7vh;
+
+@mixin softenedEdges {
+  border-radius: 0.2rem;
+}
+
 .app {
-  h1 {
-    text-align: center;
-    margin: 0;
-    padding: 0.7em 0;
+  display: grid;
+  grid-template-rows: $headerHeight 1fr $windowSize 1fr;
+  grid-template-columns: calc(#{(100 - $windowSize) / 2}) $windowSize calc(
+      #{(100 - $windowSize) / 2}
+    );
+  position: relative;
+
+  width: 100vw;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+
+  > header {
+    z-index: 2;
+    grid-row: 1/2;
+    grid-column: 1/-1;
+
+    display: flex;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    background: $colour2;
+
+    h1 {
+      width: 100%;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
   }
-  video,
-  canvas {
-    object-fit: fill;
-    width: 800px;
-    height: auto;
-    max-width: 100%;
-    max-height: 100%;
-    margin: 0;
-    padding: 0;
+  > main {
+    z-index: 1;
+    grid-row: 3/4;
+    grid-column: 2/3;
+    width: 100%;
+    height: 100%;
+
+    > * {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+  }
+  > footer {
+    z-index: 1;
+    grid-row: 4/5;
+    grid-column: 1/-1;
+
+    display: grid;
+    place-content: center;
+
+    button {
+      font-size: 1.33em;
+      padding: 0.5em 1em;
+    }
+  }
+
+  @media (orientation: landscape) {
+    & {
+      grid-template-rows: $landscapeHeaderHeight 1fr $landscapeWindowSize 1fr;
+      grid-template-columns: 1fr $landscapeWindowSize 1fr;
+    }
   }
 }

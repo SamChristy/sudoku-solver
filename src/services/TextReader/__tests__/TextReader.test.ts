@@ -22,7 +22,7 @@ it('loads without crashing', () => {
 });
 
 it('reads single char in image', async () => {
-  const reader = new TextReader({ single: true, threadCount: 1 });
+  const reader = new TextReader({ threadCount: 1 });
   await reader.load();
   const digit = await reader.read(
     path.join(digitsDir, 'sudoku-scanner-test-ts-extracts-numbers-design-3-jpg-1-snap.png')

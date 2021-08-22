@@ -1,20 +1,18 @@
-$width: 85vw;
-$height: $width;
-$borderThin: calc(#{$height} / 1000) solid black;
-$borderThick: calc(#{$height} / 125) solid black;
+@import '../App.module';
+
+$borderThin: 0.05em solid $colour1;
+$borderThick: 0.12em solid $colour1;
 
 .sudokuSolver {
-  width: $width;
-  height: $height;
-  box-sizing: border-box;
+  background: $colour2;
   margin: 0 auto;
-  margin-top: calc((100vw - #{$height}) / 2);
-  margin-bottom: calc((100vw - #{$height}) / 2);
-  font-size: calc(#{$height} / 12);
+  font-size: 6.25vw;
   font-weight: 700;
   border-collapse: collapse;
   table-layout: fixed;
   border: $borderThick;
+
+  @include softenedEdges;
 
   td {
     border: $borderThin;
@@ -32,5 +30,11 @@ $borderThick: calc(#{$height} / 125) solid black;
   }
   td:nth-child(3n) {
     border-right: $borderThick;
+  }
+
+  @media (orientation: landscape) {
+    & {
+      font-size: 5vh;
+    }
   }
 }
