@@ -72,18 +72,19 @@ export default class TextReader implements TextReaderInterface {
     };
 
     // Configure Tesseract worker to not make external download requests...
+    const scriptDir = process.env.REACT_APP_PUBLIC_SCRIPT_DIR ?? '';
     const workerConfig: Partial<WorkerOptions> = isNode
       ? {
-          langPath: path.join(__dirname, '..', '..', '..', 'public', 'ocr'),
+          langPath: path.join(__dirname, '..', '..', '..', 'public', scriptDir, 'ocr'),
           // It should be faster to cache the uncompressed lang data, although there seems to be no
           // real difference in practice; so we may as well keep the repo smaller.
           cacheMethod: 'none',
           gzip: true,
         }
       : {
-          langPath: `${process.env.PUBLIC_URL}/ocr`,
-          workerPath: `${process.env.PUBLIC_URL}/ocr/worker.min.js`,
-          corePath: `${process.env.PUBLIC_URL}/ocr/tesseract-core.wasm.js`,
+          langPath: `${process.env.PUBLIC_URL}/${scriptDir}/ocr`,
+          workerPath: `${process.env.PUBLIC_URL}/${scriptDir}/ocr/worker.min.js`,
+          corePath: `${process.env.PUBLIC_URL}/${scriptDir}/ocr/tesseract-core.wasm.js`,
         };
 
     return { tesseractConfig, workerConfig };
