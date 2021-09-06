@@ -3,7 +3,14 @@
 AI Sudoku Solver; using OpenCV and Tesseract WebAssembly libraries, for image processing
 and OCR, at *near-native* speeds entirely in the browser! 🤯
 
-### 📺 [See Demo](https://samchristy.github.io/sudoku-solver/)
+### 🤳 Live Demo
+Scan or click* the QR code, below, to view the scanner in action. (You can use one of the
+[test images][test-image], if you don't have a printed Sudoku to hand.)
+
+[![GH Pages QR Code](public/gh-pages-qr.png)][demo]
+
+_*You're likely to get better results on a mobile device - unless you have a 
+very expensive webcam!_ 
 
 [ci-badge]: https://github.com/SamChristy/sudoku-solver/workflows/CI/badge.svg
 [ci-url]: https://github.com/SamChristy/sudoku-solver/actions/workflows/ci.yml
@@ -13,3 +20,5 @@ and OCR, at *near-native* speeds entirely in the browser! 🤯
 [quality-url]: https://lgtm.com/projects/g/SamChristy/sudoku-solver/context:javascript
 [alerts-badge]: https://img.shields.io/lgtm/alerts/g/SamChristy/sudoku-solver.svg?logo=lgtm&logoWidth=18
 [alerts-url]: https://lgtm.com/projects/g/SamChristy/sudoku-solver/alerts/
+[demo]: https://samchristy.github.io/sudoku-solver/
+[test-image]: https://github.com/SamChristy/sudoku-solver/blob/main/src/services/SudokuScanner/__tests__/samples/design-3.jpg
