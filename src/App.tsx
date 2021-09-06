@@ -30,6 +30,12 @@ export default function App() {
             </button>
           )}
         </nav>
+        <p>
+          📟{' '}
+          <a href="https://github.com/SamChristy/sudoku-solver" target="_blank" rel="noreferrer">
+            see code
+          </a>
+        </p>
       </footer>
     </div>
   );

@@ -68,6 +68,21 @@ $landscapeWindowSize: 66.7vh;
       font-size: 1.33em;
       padding: 0.5em 1em;
     }
+
+    p {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+
+      background: rgba(255, 255, 255, 0.667);
+      padding: 0.5em 0.4em;
+      border-radius: 0 0.4em 0 0;
+    }
+
+    a {
+      color: black;
+      text-decoration: none;
+    }
   }
 
   @media (orientation: landscape) {
