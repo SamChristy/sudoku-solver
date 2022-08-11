@@ -22,7 +22,7 @@ $cornerBorder: $cornerWidth solid $colour3;
 
     &.top {
       top: 0;
-      margin-top: calc(#{-$cornerWidth / 2});
+      margin-top: calc(#{-$cornerWidth} / 2);
       border-top: $cornerBorder;
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
@@ -35,7 +35,7 @@ $cornerBorder: $cornerWidth solid $colour3;
     }
     &.bottom {
       bottom: 0;
-      margin-bottom: calc(#{-$cornerWidth / 2});
+      margin-bottom: calc(#{-$cornerWidth} / 2);
       border-bottom: $cornerBorder;
       border-top-left-radius: 0;
       border-top-right-radius: 0;
@@ -48,12 +48,12 @@ $cornerBorder: $cornerWidth solid $colour3;
     }
     &.right {
       right: 0;
-      margin-right: calc(#{-$cornerWidth / 2});
+      margin-right: calc(#{-$cornerWidth} / 2);
       border-right: $cornerBorder;
     }
     &.left {
       left: 0;
-      margin-left: calc(#{-$cornerWidth / 2});
+      margin-left: calc(#{-$cornerWidth} / 2);
       border-left: $cornerBorder;
     }
   }

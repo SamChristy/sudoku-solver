@@ -13,8 +13,8 @@ $landscapeWindowSize: 66.7vh;
 .app {
   display: grid;
   grid-template-rows: $headerHeight 1fr $windowSize 1fr;
-  grid-template-columns: calc(#{(100 - $windowSize) / 2}) $windowSize calc(
-      #{(100 - $windowSize) / 2}
+  grid-template-columns: calc(#{(100 - $windowSize)} / 2) $windowSize calc(
+      #{(100 - $windowSize)} / 2
     );
   position: relative;
 
