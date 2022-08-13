@@ -8,6 +8,7 @@ import { loadScript } from '../../util/browser';
 import {
   cropAndFlatten,
   cropCellBorders,
+  isBlurry,
   isContourSquarish,
   simplifyContour,
   split,
@@ -28,6 +29,7 @@ export default class SudokuScanner implements SudokuScannerInterface {
     },
     minSize: 0.25,
     maxSize: 0.99,
+    blurThreshold: 500,
   };
 
   /** The original, unmodified copy we will keep; so that we can later return a clean image. */
@@ -56,7 +58,8 @@ export default class SudokuScanner implements SudokuScannerInterface {
 
   /** @inheritDoc */
   public extractSudokuImage(outputCanvas?: HTMLCanvasElement): boolean {
-    // TODO: Check if image is too blurry (see: https://github.com/justadudewhohacks/opencv4nodejs/issues/448)
+    if (isBlurry(this.source, this.config.blurThreshold)) return false;
+
     this.preprocessImage();
     const largestSquare = this.findLargestSquare();
 
@@ -139,8 +142,6 @@ export default class SudokuScanner implements SudokuScannerInterface {
   protected preprocessImage(): void {
     const { blurRadius, thresholdBlur, thresholdNorm } = this.config.preprocess;
 
-    // Grayscale, to help line-identification.
-    cv.cvtColor(this.source, this.source, cv.COLOR_RGBA2GRAY, 0);
     // Blur, to smooth out noise.
     const blurKernel = new cv.Size(blurRadius, blurRadius);
     cv.GaussianBlur(this.source, this.source, blurKernel, 0, 0, cv.BORDER_DEFAULT);

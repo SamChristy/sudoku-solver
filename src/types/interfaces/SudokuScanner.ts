@@ -11,6 +11,8 @@ export interface SudokuScannerConfig {
   minSize: number;
   /** The largest size of sudoku (as a proportion of the source image). */
   maxSize: number;
+  /** Arbitrary number for how sharp the image should be (100 = reasonable, 500 = very). */
+  blurThreshold: number;
 }
 
 export type SudokuDigitImages = (HTMLCanvasElement | null)[][];

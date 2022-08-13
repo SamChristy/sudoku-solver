@@ -1077,6 +1077,7 @@ declare namespace cv {
     cols: any;
     rows: any;
     data32S: Array<number>;
+    data64F: any;
 
     constructor(...args: any) {}
     static ones(width: number, height: number, CV_8U: (...args: any) => any): ClassHandle {}
