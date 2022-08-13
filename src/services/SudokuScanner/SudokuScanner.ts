@@ -193,7 +193,7 @@ export default class SudokuScanner implements SudokuScannerInterface {
 
   /**
    * Loads the Scanner's dependencies in a browser context (please note, this must be done manually
-   * if using node). This must be have resolved before the class is used.
+   * if using node). This must be resolved before the class is used.
    *
    * @param timeLimit The time, in ms, after which an Error will be thrown, if the dependencies have
    *                  not loaded.
