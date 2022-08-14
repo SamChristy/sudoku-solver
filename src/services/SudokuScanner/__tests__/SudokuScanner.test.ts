@@ -11,6 +11,7 @@ expect.extend({ toMatchImageSnapshot });
 
 const { listNonHiddenFiles } = global;
 const sampleImageDir = path.join(__dirname, 'samples');
+const blurrySampleImageDir = path.join(__dirname, 'blurry-samples');
 const testSnapshotDir = path.join(sampleImageDir, '..', '__image_snapshots__');
 
 it('loads without crashing', () => {
@@ -65,6 +66,25 @@ describe.each(listNonHiddenFiles(sampleImageDir))('finds and extracts sudoku puz
     scanner.destruct();
 
     expect(canvasToBuffer(outputCanvas)).toMatchImageSnapshot();
+  })
+);
+
+describe.each(listNonHiddenFiles(blurrySampleImageDir))('rejects blurry images', filename =>
+  test(filename, async () => {
+    const inputCanvas = document.createElement('canvas');
+    const outputCanvas = document.createElement('canvas');
+    const ctx = inputCanvas.getContext('2d');
+    const image = await loadImage(`${blurrySampleImageDir}/${filename}`);
+
+    inputCanvas.width = image.width;
+    inputCanvas.height = image.height;
+    ctx?.drawImage((image as unknown) as ImageBitmap, 0, 0);
+
+    const scanner = new SudokuScanner(inputCanvas);
+    const result = scanner.extractSudokuImage(outputCanvas);
+    scanner.destruct();
+
+    expect(result).toBeFalse();
   })
 );
 
