@@ -77,7 +77,7 @@ export const isContourSquarish = (
 /**
  * Determines if the image is blurry.
  *
- * @param src       Source image - will be converted to grayscale!
+ * @param src       Source image
  * @param threshold How sharp you want it to be: 100 = reasonably sharp, 500 = very sharp.
  */
 export const isBlurry = (src: cv.Mat, threshold: number): boolean => {
@@ -85,16 +85,19 @@ export const isBlurry = (src: cv.Mat, threshold: number): boolean => {
   const dst = new cv.Mat();
   const mean = new cv.Mat();
   const standardDeviation = new cv.Mat();
+  const clone = src.clone();
 
-  cv.cvtColor(src, src, cv.COLOR_RGB2GRAY, 0);
-  cv.Laplacian(src, dst, cv.CV_64F, 1, 1, 0, cv.BORDER_DEFAULT);
+  cv.cvtColor(clone, clone, cv.COLOR_RGB2GRAY, 0);
+  cv.Laplacian(clone, dst, cv.CV_64F, 1, 1, 0, cv.BORDER_DEFAULT);
   cv.meanStdDev(dst, mean, standardDeviation);
 
   const variance = standardDeviation.data64F[0] ** 2;
 
+  clone.delete();
   dst.delete();
   mean.delete();
   standardDeviation.delete();
+
   return variance < threshold;
 };
 

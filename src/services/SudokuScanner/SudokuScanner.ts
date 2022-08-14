@@ -88,8 +88,7 @@ export default class SudokuScanner implements SudokuScannerInterface {
 
     // If we haven't scanned the image for Sudokus yet, we need to...
     if (this.processed === undefined) {
-      this.extractSudokuImage();
-      return this.extractDigits();
+      return this.extractSudokuImage() ? this.extractDigits() : null;
     }
 
     const originalCells = split(this.processed.colour, this.config.rows, this.config.columns);
@@ -142,6 +141,8 @@ export default class SudokuScanner implements SudokuScannerInterface {
   protected preprocessImage(): void {
     const { blurRadius, thresholdBlur, thresholdNorm } = this.config.preprocess;
 
+    // Grayscale, to help line-identification.
+    cv.cvtColor(this.source, this.source, cv.COLOR_RGBA2GRAY, 0);
     // Blur, to smooth out noise.
     const blurKernel = new cv.Size(blurRadius, blurRadius);
     cv.GaussianBlur(this.source, this.source, blurKernel, 0, 0, cv.BORDER_DEFAULT);
