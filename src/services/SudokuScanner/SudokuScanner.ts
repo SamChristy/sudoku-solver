@@ -29,7 +29,7 @@ export default class SudokuScanner implements SudokuScannerInterface {
     },
     minSize: 0.25,
     maxSize: 0.99,
-    blurThreshold: 500,
+    blurThreshold: 400,
   };
 
   /** The original, unmodified copy we will keep; so that we can later return a clean image. */
