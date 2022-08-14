@@ -48,10 +48,6 @@ it('reads image without crashing', async () => {
 
 describe.each(listNonHiddenFiles(sampleImageDir))('finds and extracts sudoku puzzle', filename =>
   test(filename, async () => {
-    // FIXME: Adjust size thresholding to accommodate designs 1 & 3.
-    const ignored = ['design-1.jpg', 'design-3.jpg'];
-    if (ignored.includes(filename)) return;
-
     const inputCanvas = document.createElement('canvas');
     const outputCanvas = document.createElement('canvas');
     const ctx = inputCanvas.getContext('2d');
