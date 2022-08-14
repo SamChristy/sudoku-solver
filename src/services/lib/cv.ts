@@ -93,6 +93,8 @@ export const isBlurry = (src: cv.Mat, threshold: number): boolean => {
   const variance = standardDeviation.data64F[0] ** 2;
 
   dst.delete();
+  mean.delete();
+  standardDeviation.delete();
   return variance < threshold;
 };
 
