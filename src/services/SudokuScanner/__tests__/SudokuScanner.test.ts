@@ -10,8 +10,8 @@ global.cv = cv;
 expect.extend({ toMatchImageSnapshot });
 
 const { listNonHiddenFiles } = global;
-const testImageDir = path.join(__dirname, 'samples');
-const testSnapshotDir = path.join(testImageDir, '..', '__image_snapshots__');
+const sampleImageDir = path.join(__dirname, 'samples');
+const testSnapshotDir = path.join(sampleImageDir, '..', '__image_snapshots__');
 
 it('loads without crashing', () => {
   const scanner = new SudokuScanner(document.createElement('canvas'));
@@ -38,14 +38,14 @@ it("throws error, if OpenCV isn't loaded", () => {
 it('reads image without crashing', async () => {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
-  const image = await loadImage(`${testImageDir}/dog.jpg`);
+  const image = await loadImage(`${sampleImageDir}/dog.jpg`);
   ctx?.drawImage((image as unknown) as ImageBitmap, 0, 0);
 
   const scanner = new SudokuScanner(canvas);
   scanner.destruct();
 });
 
-describe.each(listNonHiddenFiles(testImageDir))('finds and extracts sudoku puzzle', filename =>
+describe.each(listNonHiddenFiles(sampleImageDir))('finds and extracts sudoku puzzle', filename =>
   test(filename, async () => {
     // FIXME: Adjust size thresholding to accommodate designs 1 & 3.
     const ignored = ['design-1.jpg', 'design-3.jpg'];
@@ -54,7 +54,7 @@ describe.each(listNonHiddenFiles(testImageDir))('finds and extracts sudoku puzzl
     const inputCanvas = document.createElement('canvas');
     const outputCanvas = document.createElement('canvas');
     const ctx = inputCanvas.getContext('2d');
-    const image = await loadImage(`${testImageDir}/${filename}`);
+    const image = await loadImage(`${sampleImageDir}/${filename}`);
 
     inputCanvas.width = image.width;
     inputCanvas.height = image.height;
@@ -70,11 +70,11 @@ describe.each(listNonHiddenFiles(testImageDir))('finds and extracts sudoku puzzl
 
 // Most of the time is spent comparing the images, so it's only about 5% slower to reprocess the
 // entire image set (giving the benefit of more accurate failures).
-describe.each(listNonHiddenFiles(testImageDir))('extracts numbers', filename =>
+describe.each(listNonHiddenFiles(sampleImageDir))('extracts numbers', filename =>
   test(filename, async () => {
     const inputCanvas = document.createElement('canvas');
     const ctx = inputCanvas.getContext('2d');
-    const image = await loadImage(`${testImageDir}/${filename}`);
+    const image = await loadImage(`${sampleImageDir}/${filename}`);
 
     inputCanvas.width = image.width;
     inputCanvas.height = image.height;

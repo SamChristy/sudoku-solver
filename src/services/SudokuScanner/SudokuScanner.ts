@@ -58,6 +58,7 @@ export default class SudokuScanner implements SudokuScannerInterface {
 
   /** @inheritDoc */
   public extractSudokuImage(outputCanvas?: HTMLCanvasElement): boolean {
+    // TODO: Return an enum describing different error states (not found, too blurry, etc.)
     if (isBlurry(this.source, this.config.blurThreshold)) return false;
 
     this.preprocessImage();
