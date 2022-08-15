@@ -74,6 +74,33 @@ export const isContourSquarish = (
   return false;
 };
 
+/**
+ * Determines if the image is blurry.
+ *
+ * @param src       Source image
+ * @param threshold How sharp you want it to be: 100 = reasonably sharp, 500 = very sharp.
+ */
+export const isBlurry = (src: cv.Mat, threshold: number): boolean => {
+  // See: https://pyimagesearch.com/2015/09/07/blur-detection-with-opencv/
+  const dst = new cv.Mat();
+  const mean = new cv.Mat();
+  const standardDeviation = new cv.Mat();
+  const clone = src.clone();
+
+  cv.cvtColor(clone, clone, cv.COLOR_RGB2GRAY, 0);
+  cv.Laplacian(clone, dst, cv.CV_64F, 1, 1, 0, cv.BORDER_DEFAULT);
+  cv.meanStdDev(dst, mean, standardDeviation);
+
+  const variance = standardDeviation.data64F[0] ** 2;
+
+  clone.delete();
+  dst.delete();
+  mean.delete();
+  standardDeviation.delete();
+
+  return variance < threshold;
+};
+
 export const cropAndFlatten = (src: cv.Mat, rectangleContour: cv.Mat): cv.Mat => {
   const [sourceWidth, sourceHeight] = [src.cols, src.rows];
 

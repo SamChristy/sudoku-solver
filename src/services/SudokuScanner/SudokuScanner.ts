@@ -8,6 +8,7 @@ import { loadScript } from '../../util/browser';
 import {
   cropAndFlatten,
   cropCellBorders,
+  isBlurry,
   isContourSquarish,
   simplifyContour,
   split,
@@ -28,6 +29,7 @@ export default class SudokuScanner implements SudokuScannerInterface {
     },
     minSize: 0.25,
     maxSize: 0.99,
+    blurThreshold: 400,
   };
 
   /** The original, unmodified copy we will keep; so that we can later return a clean image. */
@@ -56,7 +58,9 @@ export default class SudokuScanner implements SudokuScannerInterface {
 
   /** @inheritDoc */
   public extractSudokuImage(outputCanvas?: HTMLCanvasElement): boolean {
-    // TODO: Check if image is too blurry (see: https://github.com/justadudewhohacks/opencv4nodejs/issues/448)
+    // TODO: Return an enum describing different error states (not found, too blurry, etc.)
+    if (isBlurry(this.source, this.config.blurThreshold)) return false;
+
     this.preprocessImage();
     const largestSquare = this.findLargestSquare();
 
@@ -85,8 +89,7 @@ export default class SudokuScanner implements SudokuScannerInterface {
 
     // If we haven't scanned the image for Sudokus yet, we need to...
     if (this.processed === undefined) {
-      this.extractSudokuImage();
-      return this.extractDigits();
+      return this.extractSudokuImage() ? this.extractDigits() : null;
     }
 
     const originalCells = split(this.processed.colour, this.config.rows, this.config.columns);
@@ -193,7 +196,7 @@ export default class SudokuScanner implements SudokuScannerInterface {
 
   /**
    * Loads the Scanner's dependencies in a browser context (please note, this must be done manually
-   * if using node). This must be have resolved before the class is used.
+   * if using node). This must be resolved before the class is used.
    *
    * @param timeLimit The time, in ms, after which an Error will be thrown, if the dependencies have
    *                  not loaded.

@@ -8,7 +8,7 @@ type Rectangle = {
 };
 
 export const distance = ([x1, y1]: Point, [x2, y2]: Point): number =>
-  ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** (1 / 2);
+  ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5;
 
 export const closest = (reference: Point, points: Point[]): Point => {
   const distances = points.map(point => distance(reference, point));
