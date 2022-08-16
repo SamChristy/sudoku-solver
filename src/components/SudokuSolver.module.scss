@@ -21,6 +21,10 @@ $borderThick: 0.12em solid $colour1;
     width: calc(100% / 9);
     max-width: calc(100% / 9);
     max-height: calc(100% / 9);
+
+    &.original {
+      color: $colour3 !important;
+    }
   }
   tr {
     height: calc(100% / 9);
@@ -30,6 +34,24 @@ $borderThick: 0.12em solid $colour1;
   }
   td:nth-child(3n) {
     border-right: $borderThick;
+  }
+
+  .error {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    padding: 1em;
+
+    h2 {
+      color: $colour3;
+      font-size: 105%;
+      font-weight: 600;
+    }
+    p {
+      font-size: 75%;
+      font-weight: 400;
+      margin: 0.5em 0;
+    }
   }
 
   @media (orientation: landscape) {
