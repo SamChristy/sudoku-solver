@@ -20,7 +20,9 @@ export default function useReader(
       digitImages &&
       Promise.all(
         digitImages.map(row =>
-          Promise.all(row.map(digit => (digit ? digitReader.read(digit) : '')))
+          Promise.all(
+            row.map(async digit => (digit ? parseInt(await digitReader.read(digit), 10) || 0 : 0))
+          )
         )
       ).then(setSudoku),
     [digitImages, digitReader]

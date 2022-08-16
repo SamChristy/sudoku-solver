@@ -10,9 +10,7 @@ $systemFonts: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1,
-h2,
-h3 {
+h1 {
   font-family: 'Dancing Script', 'Brush Script MT', cursive, $systemFonts;
 }
 
