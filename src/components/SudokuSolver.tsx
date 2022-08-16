@@ -10,7 +10,7 @@ export default function SudokuSolver({ sudoku }: { sudoku: Sudoku }) {
           <tr key={i}>
             {row.map(cell => (
               // eslint-disable-next-line no-plusplus -- 🙄
-              <td key={i++}>{cell}</td>
+              <td key={i++}>{cell || ''}</td>
             ))}
           </tr>
         ))}
