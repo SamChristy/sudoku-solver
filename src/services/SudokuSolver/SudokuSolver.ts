@@ -90,27 +90,26 @@ export default class SudokuSolver implements SudokuSolverInterface {
     return this.validateBlock(Math.floor(row / blockHeight), Math.floor(col / blockWidth));
   }
 
+  // TODO: Improve sudoku-solving algo, by eliminating invalid numbers to begin with
+  //       (using bitmasks, to represent possible numbers, might also be faster?)
   public solve(): Sudoku | null {
     const { grid, width, height } = this;
 
     for (let row = 0; row < height; row++) {
       for (let col = 0; col < width; col++) {
-        // Check if cell is empty
         if (!grid[row][col]) {
-          // Try different numbers in cell...
+          // If the cell is empty, try filling it with each possible number
           for (let n = 1; n <= 9; n++) {
             grid[row][col] = n;
 
-            // If this number is valid, then perform a recursive DFS
-            if (this.validateCell(row, col)) {
-              if (this.solve()) return grid;
-              grid[row][col] = 0;
-            }
-            grid[row][col] = 0;
+            // If this number is valid in the cell, continue exploring this "path" with a DFS and
+            // return the grid if it solves.
+            if (this.validateCell(row, col) && this.solve()) return grid;
           }
 
           // If we couldn't find a valid number for the cell, then we need to stop exploring this
-          // path.
+          // path and backtrack; by resetting the cell to "empty".
+          grid[row][col] = 0;
           return null;
         }
       }
