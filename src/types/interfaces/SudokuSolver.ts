@@ -1,4 +1,5 @@
 export type Sudoku = number[][];
+export type PossibleDigitsMatrix = Array<Array<Set<number>>>;
 
 export default interface SudokuSolver {
   /**
